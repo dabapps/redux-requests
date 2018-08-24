@@ -272,43 +272,64 @@ describe('Requests', () => {
       });
 
       it('should set a response state', () => {
-        const responsesState = responsesReducer(undefined, {
-          payload: {
-            actionSet: ACTION_SET,
+        ['tag', ''].forEach(tag => {
+          const responsesState = responsesReducer(undefined, {
+            payload: {
+              actionSet: ACTION_SET,
+              data: {},
+              requestState: 'REQUEST',
+              tag,
+            },
+            type: REQUEST_STATE,
+          });
+          expect(responsesState[ACTION_SET.REQUEST][tag]).toEqual({
             data: {},
             requestState: 'REQUEST',
-            tag: 'tag',
-          },
-          type: REQUEST_STATE,
-        });
-        expect(responsesState[ACTION_SET.REQUEST].tag).toEqual({
-          data: {},
-          requestState: 'REQUEST',
+          });
         });
       });
 
       it('should reset a response state', () => {
-        const initial = responsesReducer(undefined, {
-          payload: {
-            actionSet: ACTION_SET,
-            data: {},
-            requestState: 'REQUEST',
-            tag: 'tag',
-          },
-          type: REQUEST_STATE,
+        ['tag', ''].forEach(tag => {
+          const initial = responsesReducer(undefined, {
+            payload: {
+              actionSet: ACTION_SET,
+              data: {},
+              requestState: 'REQUEST',
+              tag,
+            },
+            type: REQUEST_STATE,
+          });
+
+          [initial, undefined].forEach(value => {
+            const responsesState = responsesReducer(value, {
+              payload: {
+                actionSet: ACTION_SET,
+                tag,
+              },
+              type: RESET_REQUEST_STATE,
+            });
+
+            expect(responsesState[ACTION_SET.REQUEST][tag]).toEqual({
+              data: null,
+              requestState: null,
+            });
+          });
+        });
+      });
+
+      it('should discard non-FSA actions', () => {
+        const currentResponsesState = responsesReducer(undefined, {
+          type: 'action',
         });
 
-        const responsesState = responsesReducer(initial, {
-          payload: {
-            actionSet: ACTION_SET,
-            tag: 'tag',
-          },
-          type: RESET_REQUEST_STATE,
-        });
+        [REQUEST_STATE, RESET_REQUEST_STATE].forEach(type => {
+          const responsesState = responsesReducer(currentResponsesState, {
+            llama: true,
+            type,
+          });
 
-        expect(responsesState[ACTION_SET.REQUEST].tag).toEqual({
-          data: null,
-          requestState: null,
+          expect(responsesState).toEqual(currentResponsesState);
         });
       });
     });
