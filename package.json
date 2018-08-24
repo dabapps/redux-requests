@@ -33,6 +33,7 @@
   "homepage": "https://github.com/dabapps/redux-requests#readme",
   "dependencies": {
     "@types/js-cookie": "^2.0.28",
+    "@types/node": "^7.0.18",
     "browserify": "^16.2.2",
     "tsify": "^3.0.4",
     "typescript": "^2.9.2",

@@ -5,7 +5,12 @@
     "strict": true,
     "pretty": true,
     "jsx": "react",
-    "target": "es5"
+    "target": "es5",
+    "lib": [
+      "es5",
+      "dom",
+      "es2015.promise"
+    ]
   },
   "typeRoots" : [
     "./types/",
