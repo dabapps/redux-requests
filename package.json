@@ -1,0 +1,77 @@
+{
+  "name": "@dabapps/redux-requests",
+  "version": "0.0.0",
+  "description": "Library for simple Redux Requests",
+  "main": "dist/js/index.js",
+  "directories": {},
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "dist": "./scripts/dist",
+    "start": "budo examples/less/index.less examples/ts/index.ts --live -- -t node-lessify -p [tsify -p examples/tsconfig.json]",
+    "lint": "tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
+    "prettier-check": "diffs=$(prettier --list-different '{src,tests,types,examples,docs}/**/*.ts?(x)'); if [ ! -z $diffs ]; then echo \"Run 'npm run prettier'\nThe following files need formatting:\n$diffs\" && exit 1; fi;",
+    "tests": "jest",
+    "test": "npm run prettier-check && npm run lint && npm run tests -- --runInBand --coverage",
+    "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.ts?(x)'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dabapps/redux-requests.git"
+  },
+  "keywords": [
+    "npm",
+    "template",
+    "dabapps"
+  ],
+  "author": "DabApps",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/dabapps/redux-requests/issues"
+  },
+  "homepage": "https://github.com/dabapps/redux-requests#readme",
+  "dependencies": {
+    "@types/js-cookie": "^2.0.28",
+    "browserify": "^16.2.2",
+    "tsify": "^3.0.4",
+    "typescript": "^2.9.2",
+    "axios": ">= 0.16.2 < 0.17",
+    "js-cookie": "^2.1.4",
+    "flux-standard-action": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "budo": "^11.3.2",
+    "jest": "^23.5.0",
+    "node-lessify": "^0.1.5",
+    "prettier": "^1.14.2",
+    "ts-jest": "^23.1.4",
+    "tslint": "^5.11.0",
+    "tslint-config-dabapps": "github:dabapps/tslint-config-dabapps#v0.5.1"
+  },
+  "peerDependencies": {},
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/tests/.*|\\.(test|spec))\\.(ts|tsx|js|jsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/helpers/*"
+    ]
+  }
+}
