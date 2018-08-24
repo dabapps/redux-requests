@@ -38,7 +38,9 @@
     "typescript": "^2.9.2",
     "axios": ">= 0.16.2 < 0.17",
     "js-cookie": "^2.1.4",
-    "flux-standard-action": "^1.2.0"
+    "flux-standard-action": "^1.2.0",
+    "redux": "^3.7.2",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",

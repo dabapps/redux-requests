@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { Dict } from '../utils';
+
+export type Dict<T> = Readonly<{ [key: string]: T }>;
 
 export type RequestStates = 'REQUEST' | 'SUCCESS' | 'FAILURE';
 export type UrlMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH';

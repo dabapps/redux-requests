@@ -1,16 +1,16 @@
 import { AxiosPromise, AxiosResponse, default as axios } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
-import { Dict } from '../utils';
 import {
   AsyncActionSet,
+  Dict,
   RequestMetaData,
   ResponsesReducerState,
   ResponseState,
 } from './types';
 
-function asEntries(params: Dict<T>): ReadonlyArray<[string, T]> {
-  const result = [];
+function asEntries<T>(params: Dict<T>): ReadonlyArray<[string, T]> {
+  const result: Array<[string, T]> = [];
   for (const key in params) {
     if (params.hasOwnProperty(key)) {
       result.push([key, params[key]]);
@@ -27,14 +27,17 @@ export function makeAsyncActionSet(actionName: string): AsyncActionSet {
   };
 }
 
-export function formatQueryParams(params?: {}): string {
+export function formatQueryParams<T>(params?: Dict<T>): string {
   if (!params) {
     return '';
   }
 
   const asPairs = asEntries(params);
   const filteredPairs = asPairs
-    .filter(([key, value]) => value !== null && typeof value !== 'undefined')
+    .filter(
+      ([key, value]: [string, T]) =>
+        value !== null && typeof value !== 'undefined'
+    )
     .map(([key, value]) => [key, value.toString()]);
 
   if (!filteredPairs || !filteredPairs.length) {
