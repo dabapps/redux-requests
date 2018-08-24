@@ -9,6 +9,16 @@ import {
   ResponseState,
 } from './types';
 
+function asEntries(params: Dict<T>): ReadonlyArray<[string, T]> {
+  const result = [];
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      result.push([key, params[key]]);
+    }
+  }
+  return result;
+}
+
 export function makeAsyncActionSet(actionName: string): AsyncActionSet {
   return {
     FAILURE: actionName + '_FAILURE',
@@ -22,7 +32,7 @@ export function formatQueryParams(params?: {}): string {
     return '';
   }
 
-  const asPairs = Object.asEntries(params);
+  const asPairs = asEntries(params);
   const filteredPairs = asPairs
     .filter(([key, value]) => value !== null && typeof value !== 'undefined')
     .map(([key, value]) => [key, value.toString()]);

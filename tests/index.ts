@@ -47,11 +47,14 @@ jest.mock('axios', () => {
 import { AxiosResponse } from 'axios';
 import {
   anyPending,
+  apiRequest,
   dispatchGenericRequest,
+  formatQueryParams,
   getErrorData,
   hasFailed,
   hasSucceeded,
   isPending,
+  makeAsyncActionSet,
   metaWithResponse,
   REQUEST_STATE,
   RequestMetaData,
@@ -336,6 +339,46 @@ describe('Requests', () => {
   });
 
   describe('utils', () => {
+    describe('makeAsyncActionSet', () => {
+      it('should generate an action set', () => {
+        const result = makeAsyncActionSet('HELLO');
+        expect(result).toEqual({
+          FAILURE: 'HELLO_FAILURE',
+          REQUEST: 'HELLO_REQUEST',
+          SUCCESS: 'HELLO_SUCCESS',
+        });
+      });
+    });
+
+    describe('formatQueryParams', () => {
+      it('should return an empty set if no params are provided', () => {
+        const result = formatQueryParams();
+        expect(result).toBe('');
+      });
+
+      it('should filter out unused values', () => {
+        const result = formatQueryParams({ a: undefined, b: null });
+        expect(result).toBe('');
+      });
+
+      it('should produce a query string', () => {
+        const result = formatQueryParams({ a: '1', b: '2' });
+        expect(result).toBe('?a=1&b=2');
+      });
+
+      it('should handle odd objects', () => {
+        function dummy() {
+          // Do nothing
+        }
+        dummy.prototype.b = '2';
+
+        const params = new dummy();
+        params.a = '1';
+        const result = formatQueryParams(params);
+        expect(result).toBe('?a=1');
+      });
+    });
+
     describe('isPending', () => {
       it('should return true if a request is pending', () => {
         const responsesState: ResponsesReducerState = {
@@ -469,6 +512,27 @@ describe('Requests', () => {
           error: 'Error data!',
         });
       });
+    });
+  });
+
+  describe('apiRequest', () => {
+    it('should provide defaults for data and headers', () => {
+      const request = apiRequest('http://localhost.com', 'GET');
+      const params = request.params;
+      expect(params.data).toEqual({});
+      expect(params.headers).not.toBeUndefined();
+    });
+
+    it('should carry forward our provided data', () => {
+      const request = apiRequest(
+        'http://localhost.com',
+        'GET',
+        { a: 1 },
+        { b: 2 }
+      );
+      const params = request.params;
+      expect(params.data).toEqual({ a: 1 });
+      expect(params.headers.b).toBe(2);
     });
   });
 });
