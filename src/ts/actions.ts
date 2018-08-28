@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios'; // tslint:disable-line:no-unused-variable
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
@@ -46,7 +45,7 @@ export function dispatchGenericRequest(
   metaData: RequestMetaData = {},
   preserveOriginal?: boolean
 ) {
-  return (dispatch: Dispatch<any>, getState: () => any) => {
+  return (dispatch: Dispatch<any>) => {
     const meta: RequestMetaData = { ...metaData, tag };
 
     dispatch({ type: actionSet.REQUEST, meta, payload: { preserveOriginal } });

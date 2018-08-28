@@ -1,6 +1,5 @@
 export {
   REQUEST_STATE,
-  setRequestState,
   dispatchGenericRequest,
   RESET_REQUEST_STATE,
   resetRequestState,
