@@ -45,24 +45,27 @@ jest.mock('axios', () => {
 });
 
 import { AxiosResponse } from 'axios';
+import { setRequestState } from '../src/ts/actions';
+import {
+  apiRequest,
+  formatQueryParams,
+  metaWithResponse,
+} from '../src/ts/utils';
+
 import {
   anyPending,
-  apiRequest,
   dispatchGenericRequest,
-  formatQueryParams,
   getErrorData,
   hasFailed,
   hasSucceeded,
   isPending,
   makeAsyncActionSet,
-  metaWithResponse,
   REQUEST_STATE,
   RequestMetaData,
   RESET_REQUEST_STATE,
   resetRequestState,
   responsesReducer,
   ResponsesReducerState,
-  setRequestState,
 } from '../src/ts/index';
 
 describe('Requests', () => {
@@ -156,7 +159,7 @@ describe('Requests', () => {
       });
 
       it('should dispatch request actions', () => {
-        request = (thunk(dispatch, getState) as any) as AxiosMock; // FIXME: We need type-safe mocking
+        request = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
@@ -175,8 +178,7 @@ describe('Requests', () => {
 
       it('should normalize URLs', () => {
         request = dispatchGenericRequest(ACTION_SET, '/api//llama/', METHOD)(
-          dispatch,
-          getState
+          dispatch
         ) as any;
         expect((request as any).params.url).toEqual('/api/llama/');
       });
@@ -186,7 +188,7 @@ describe('Requests', () => {
           ACTION_SET,
           'http://www.test.com',
           METHOD
-        )(dispatch, getState) as any;
+        )(dispatch) as any;
         expect((request as any).params.url).toEqual('http://www.test.com');
       });
 
@@ -372,7 +374,7 @@ describe('Requests', () => {
         }
         dummy.prototype.b = '2';
 
-        const params = new dummy();
+        const params = new (dummy as any)();
         params.a = '1';
         const result = formatQueryParams(params);
         expect(result).toBe('?a=1');
@@ -518,7 +520,7 @@ describe('Requests', () => {
   describe('apiRequest', () => {
     it('should provide defaults for data and headers', () => {
       const request = apiRequest('http://localhost.com', 'GET');
-      const params = request.params;
+      const params = (request as any).params;
       expect(params.data).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
@@ -530,7 +532,7 @@ describe('Requests', () => {
         { a: 1 },
         { b: 2 }
       );
-      const params = request.params;
+      const params = (request as any).params;
       expect(params.data).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);
     });
