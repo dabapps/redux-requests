@@ -15,7 +15,7 @@
     "tests": "jest",
     "test": "npm run lint && npm run tests -- --runInBand --coverage",
     "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.ts?(x)'",
-    "prepublishOnly": "npm run dist"
+    "prepublishOnly": "npm test && npm run dist"
   },
   "repository": {
     "type": "git",
