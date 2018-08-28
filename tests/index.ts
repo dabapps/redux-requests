@@ -46,8 +46,13 @@ jest.mock('axios', () => {
 
 import { AxiosResponse } from 'axios';
 import {
-  anyPending,
   apiRequest,
+  formatQueryParams,
+  metaWithResponse,
+} from '../src/ts/utils';
+
+import {
+  anyPending,
   dispatchGenericRequest,
   formatQueryParams,
   getErrorData,
