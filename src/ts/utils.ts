@@ -35,8 +35,7 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
   const asPairs = asEntries(params);
   const filteredPairs = asPairs
     .filter(
-      ([, /* key */ value]: [string, T]) =>
-        value !== null && typeof value !== 'undefined'
+      ([, value]: [string, T]) => value !== null && typeof value !== 'undefined'
     )
     .map(([key, value]) => [key, value.toString()]);
 
