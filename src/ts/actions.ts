@@ -62,7 +62,6 @@ export function dispatchGenericRequest(
         return response;
       })
       .catch(error => {
-        console.error(error); // tslint:disable-line:no-console
         const errorData = error && error.response && error.response.data;
         dispatch({
           type: actionSet.FAILURE,
