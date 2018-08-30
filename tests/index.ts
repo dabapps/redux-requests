@@ -201,12 +201,12 @@ describe('Requests', () => {
           meta: {
             tag: undefined,
           },
-          payload: 'llama',
+          payload: { data: 'llama' },
           type: ACTION_SET.SUCCESS,
         });
 
         expect(dispatch).toHaveBeenCalledWith(
-          setRequestState(ACTION_SET, 'SUCCESS', 'llama', undefined)
+          setRequestState(ACTION_SET, 'SUCCESS', { data: 'llama' }, undefined)
         );
       });
 
@@ -223,12 +223,22 @@ describe('Requests', () => {
           meta: {
             tag: undefined,
           },
-          payload: 'llama',
+          payload: {
+            response: {
+              data: 'llama',
+            },
+          },
           type: ACTION_SET.FAILURE,
+          error: true,
         });
 
         expect(dispatch).toHaveBeenCalledWith(
-          setRequestState(ACTION_SET, 'FAILURE', 'llama', undefined)
+          setRequestState(
+            ACTION_SET,
+            'FAILURE',
+            { response: { data: 'llama' } },
+            undefined
+          )
         );
       });
     });
