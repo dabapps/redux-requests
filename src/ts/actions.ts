@@ -55,20 +55,19 @@ export function dispatchGenericRequest(
       .then(response => {
         dispatch({
           type: actionSet.SUCCESS,
-          payload: response.data,
+          payload: response,
           meta: metaWithResponse(meta, response),
         });
-        dispatch(setRequestState(actionSet, 'SUCCESS', response.data, tag));
+        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag));
         return response;
       })
       .catch(error => {
-        const errorData = error && error.response && error.response.data;
         dispatch({
           type: actionSet.FAILURE,
-          payload: errorData,
-          meta: metaWithResponse(meta, error && error.response),
+          payload: error,
+          meta: metaWithResponse(meta, error),
         });
-        dispatch(setRequestState(actionSet, 'FAILURE', errorData, tag));
+        dispatch(setRequestState(actionSet, 'FAILURE', error, tag));
         return Promise.reject(error);
       });
   };
