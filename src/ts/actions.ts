@@ -66,6 +66,7 @@ export function dispatchGenericRequest(
           type: actionSet.FAILURE,
           payload: error,
           meta: metaWithResponse(meta, error),
+          error: true,
         });
         dispatch(setRequestState(actionSet, 'FAILURE', error, tag));
         return Promise.reject(error);
