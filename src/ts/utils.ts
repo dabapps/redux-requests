@@ -69,20 +69,22 @@ export function apiRequest(
     myPath = path.normalize(url);
   }
 
-  const params = {
+  const config = {
     method,
     url: myPath,
     headers: combinedHeaders,
     onUploadProgress,
   };
+
+  // Axios uses a different key for sending data on a GET request
   if (method === 'GET') {
     return axios({
-      ...params,
+      ...config,
       params: data,
     });
   }
   return axios({
-    ...params,
+    ...config,
     data,
   });
 }
@@ -107,7 +109,7 @@ export function metaWithResponse(
   return { ...meta, response };
 }
 
-function getResponse(
+function getResponseState(
   state: ResponsesReducerState,
   actionSet: AsyncActionSet,
   tag?: string
@@ -119,7 +121,7 @@ export function isPending(
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
-  return getResponse(state, actionSet, tag).requestState === 'REQUEST';
+  return getResponseState(state, actionSet, tag).requestState === 'REQUEST';
 }
 
 export function hasFailed(
@@ -127,7 +129,7 @@ export function hasFailed(
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
-  return getResponse(state, actionSet, tag).requestState === 'FAILURE';
+  return getResponseState(state, actionSet, tag).requestState === 'FAILURE';
 }
 
 export function hasSucceeded(
@@ -135,7 +137,7 @@ export function hasSucceeded(
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
-  return getResponse(state, actionSet, tag).requestState === 'SUCCESS';
+  return getResponseState(state, actionSet, tag).requestState === 'SUCCESS';
 }
 
 export function anyPending(
@@ -153,7 +155,7 @@ export function anyPending(
 }
 
 function isAxiosError(data: Dict<any>): data is AxiosError {
-  return data.response;
+  return 'response' in data;
 }
 
 export function getErrorData(
@@ -162,9 +164,9 @@ export function getErrorData(
   tag?: string
 ): AxiosError | null {
   if (hasFailed(state, actionSet, tag)) {
-    const response = getResponse(state, actionSet, tag);
-    if (response.data && isAxiosError(response.data)) {
-      return response.data;
+    const responseState = getResponseState(state, actionSet, tag);
+    if (responseState.data && isAxiosError(responseState.data)) {
+      return responseState.data;
     }
   }
   return null;
