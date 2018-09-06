@@ -514,7 +514,7 @@ describe('Requests', () => {
                 },
                 config: {},
                 name: '',
-                message: ''
+                message: '',
               },
             },
           },
@@ -537,7 +537,7 @@ describe('Requests', () => {
                 },
                 config: {},
                 name: '',
-                message: ''
+                message: '',
               },
             },
           },

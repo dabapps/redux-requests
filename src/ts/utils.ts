@@ -155,7 +155,7 @@ export function anyPending(
 }
 
 function isAxiosError(data: Dict<any>): data is AxiosError {
-  return 'response' in data;
+  return 'config' in data && 'name' in data && 'message' in data;
 }
 
 export function getErrorData(

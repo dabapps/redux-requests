@@ -11,7 +11,7 @@ export interface RequestMetaData {
   subgroup?: string;
   shouldAppend?: boolean;
   ordering?: string;
-  response?: AxiosResponse;
+  response?: AxiosResponse<any>;
 }
 
 export type AsyncActionSet = Readonly<{
@@ -22,7 +22,7 @@ export type AsyncActionSet = Readonly<{
 
 export type ResponseState = Readonly<{
   requestState: RequestStates | null;
-  data: AxiosResponse | AxiosError | null;
+  data: AxiosResponse<any> | AxiosError | null;
 }>;
 
 export type ResponsesReducerState = Dict<Dict<ResponseState>>;
