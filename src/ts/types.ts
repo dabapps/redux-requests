@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 export type Dict<T> = Readonly<{ [key: string]: T }>;
 
@@ -22,7 +22,7 @@ export type AsyncActionSet = Readonly<{
 
 export type ResponseState = Readonly<{
   requestState: RequestStates | null;
-  data: AxiosResponse | null;
+  data: AxiosResponse | AxiosError | null;
 }>;
 
 export type ResponsesReducerState = Dict<Dict<ResponseState>>;

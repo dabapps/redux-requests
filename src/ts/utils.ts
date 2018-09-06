@@ -1,4 +1,4 @@
-import { AxiosPromise, AxiosResponse, default as axios } from 'axios';
+import { AxiosError, AxiosPromise, AxiosResponse, default as axios } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
 import {
@@ -7,6 +7,7 @@ import {
   RequestMetaData,
   ResponsesReducerState,
   ResponseState,
+  UrlMethod,
 } from './types';
 
 function asEntries<T>(params: Dict<T>): ReadonlyArray<[string, T]> {
@@ -48,7 +49,7 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
 
 export function apiRequest(
   url: string,
-  method: string,
+  method: UrlMethod,
   data = {},
   headers = {},
   onUploadProgress?: (event: ProgressEvent) => void
@@ -68,12 +69,21 @@ export function apiRequest(
     myPath = path.normalize(url);
   }
 
-  return axios({
+  const params = {
     method,
     url: myPath,
-    data,
     headers: combinedHeaders,
     onUploadProgress,
+  };
+  if (method === 'GET') {
+    return axios({
+      ...params,
+      params: data,
+    });
+  }
+  return axios({
+    ...params,
+    data,
   });
 }
 
@@ -142,13 +152,20 @@ export function anyPending(
   });
 }
 
+function isAxiosError(data: Dict<any>): data is AxiosError {
+  return data.response;
+}
+
 export function getErrorData(
   state: ResponsesReducerState,
   actionSet: AsyncActionSet,
   tag?: string
-): AxiosResponse | null {
+): AxiosError | null {
   if (hasFailed(state, actionSet, tag)) {
-    return getResponse(state, actionSet, tag).data;
+    const response = getResponse(state, actionSet, tag);
+    if (response.data && isAxiosError(response.data)) {
+      return response.data;
+    }
   }
   return null;
 }
