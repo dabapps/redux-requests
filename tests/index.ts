@@ -503,24 +503,37 @@ describe('Requests', () => {
             tag: {
               requestState: 'REQUEST',
               data: {
-                error: 'Error data!',
+                data: {
+                  error: 'Error data!',
+                },
+                status: 500,
+                statusText: '',
+                config: {},
+                headers: {},
               },
             },
           },
         };
-        expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(undefined);
+        expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(null);
 
         const responsesState2: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
               data: {
-                error: 'Error data!',
+                data: {
+                  error: 'Error data!',
+                },
+                status: 500,
+                statusText: '',
+                config: {},
+                headers: {},
               },
             },
           },
         };
-        expect(getErrorData(responsesState2, ACTION_SET, 'tag')).toEqual({
+        const errorData = getErrorData(responsesState2, ACTION_SET, 'tag');
+        expect(errorData && errorData.data).toEqual({
           error: 'Error data!',
         });
       });

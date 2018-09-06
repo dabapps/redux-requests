@@ -146,8 +146,9 @@ export function getErrorData(
   state: ResponsesReducerState,
   actionSet: AsyncActionSet,
   tag?: string
-): Dict<any> | ReadonlyArray<any> | string | number | null | undefined {
+): AxiosResponse | null {
   if (hasFailed(state, actionSet, tag)) {
     return getResponse(state, actionSet, tag).data;
   }
+  return null;
 }

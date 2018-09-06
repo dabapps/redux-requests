@@ -22,7 +22,7 @@ export type AsyncActionSet = Readonly<{
 
 export type ResponseState = Readonly<{
   requestState: RequestStates | null;
-  data: Dict<any> | ReadonlyArray<any> | string | number | null;
+  data: AxiosResponse | null;
 }>;
 
 export type ResponsesReducerState = Dict<Dict<ResponseState>>;
