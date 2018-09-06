@@ -503,42 +503,104 @@ describe('Requests', () => {
             tag: {
               requestState: 'REQUEST',
               data: {
-                error: 'Error data!',
+                response: {
+                  data: {
+                    error: 'Error data!',
+                  },
+                  status: 500,
+                  statusText: '',
+                  config: {},
+                  headers: {},
+                },
+                config: {},
+                name: '',
+                message: '',
               },
             },
           },
         };
-        expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(undefined);
+        expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(null);
 
         const responsesState2: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
               data: {
-                error: 'Error data!',
+                response: {
+                  data: {
+                    error: 'Error data!',
+                  },
+                  status: 500,
+                  statusText: '',
+                  config: {},
+                  headers: {},
+                },
+                config: {},
+                name: '',
+                message: '',
               },
             },
           },
         };
-        expect(getErrorData(responsesState2, ACTION_SET, 'tag')).toEqual({
+        const errorData = getErrorData(responsesState2, ACTION_SET, 'tag');
+        expect(errorData && errorData.response && errorData.response.data).toEqual({
           error: 'Error data!',
         });
+      });
+
+      it('should skip non-error data', () => {
+        const responsesState: ResponsesReducerState = {
+          [ACTION_SET.REQUEST]: {
+            tag: {
+              requestState: 'FAILURE',
+              data: {
+                data: {
+                  error: 'Error data!',
+                },
+                status: 500,
+                statusText: '',
+                config: {},
+                headers: {},
+              },
+            },
+          },
+        };
+        expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(null);
       });
     });
   });
 
   describe('apiRequest', () => {
-    it('should provide defaults for data and headers', () => {
+    it('should provide defaults for data and headers - GET', () => {
       const request = apiRequest('http://localhost.com', 'GET');
+      const params = (request as any).params;
+      expect(params.params).toEqual({});
+      expect(params.headers).not.toBeUndefined();
+    });
+
+    it('should provide defaults for data and headers - POST', () => {
+      const request = apiRequest('http://localhost.com', 'POST');
       const params = (request as any).params;
       expect(params.data).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
-    it('should carry forward our provided data', () => {
+    it('should carry forward our provided data - GET', () => {
       const request = apiRequest(
         'http://localhost.com',
         'GET',
+        { a: 1 },
+        { b: 2 }
+      );
+      const params = (request as any).params;
+      expect(params.params).toEqual({ a: 1 });
+      expect(params.headers.b).toBe(2);
+    });
+
+    it('should carry forward our provided data - POST', () => {
+      const request = apiRequest(
+        'http://localhost.com',
+        'POST',
         { a: 1 },
         { b: 2 }
       );
