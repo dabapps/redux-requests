@@ -3,6 +3,7 @@ interface AxiosMock {
   success: (response: any) => any;
   catch: (fn: (...args: any[]) => any) => any;
   then: (fn: (...args: any[]) => any) => any;
+  params: any;
 }
 
 jest.mock('axios', () => {
@@ -148,10 +149,16 @@ describe('Requests', () => {
           {},
           'tag',
           {},
-          false
+          {}
         );
 
         expect(requestWithLotsOfParams).not.toThrowError();
+      });
+
+      it('should allow for Header overrides', () => {
+        const headerThunk = dispatchGenericRequest(ACTION_SET, '/api/url', METHOD, {}, 'tag', {}, { 'header1': 'blah' });
+        request = (headerThunk(dispatch) as any) as AxiosMock;
+        expect(request.params.headers.header1).toBe('blah');
       });
 
       it('should return a thunk for sending a generic request', () => {
@@ -164,9 +171,6 @@ describe('Requests', () => {
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
             tag: undefined,
-          },
-          payload: {
-            preserveOriginal: undefined,
           },
           type: ACTION_SET.REQUEST,
         });

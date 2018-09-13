@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
+  Dict,
   RequestMetaData,
   RequestStates,
   UrlMethod,
@@ -43,15 +44,15 @@ export function dispatchGenericRequest(
   data?: any,
   tag?: string,
   metaData: RequestMetaData = {},
-  preserveOriginal?: boolean
+  headers: Dict<string> = {}
 ) {
   return (dispatch: Dispatch<any>) => {
     const meta: RequestMetaData = { ...metaData, tag };
 
-    dispatch({ type: actionSet.REQUEST, meta, payload: { preserveOriginal } });
+    dispatch({ type: actionSet.REQUEST, meta });
     dispatch(setRequestState(actionSet, 'REQUEST', null, tag));
 
-    return apiRequest(url, method, data)
+    return apiRequest(url, method, data, headers)
       .then(response => {
         dispatch({
           type: actionSet.SUCCESS,
