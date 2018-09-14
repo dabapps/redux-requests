@@ -5,14 +5,9 @@ export type Dict<T> = Readonly<{ [key: string]: T }>;
 export type RequestStates = 'REQUEST' | 'SUCCESS' | 'FAILURE';
 export type UrlMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH';
 
-export interface RequestMetaData {
-  tag?: string;
-  itemId?: string;
-  subgroup?: string;
-  shouldAppend?: boolean;
-  ordering?: string;
-  response?: AxiosResponse<any>;
-}
+export type RequestMetaData = {
+  readonly tag: string;
+} & Dict<any>;
 
 export type AsyncActionSet = Readonly<{
   FAILURE: string;

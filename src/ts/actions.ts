@@ -6,14 +6,14 @@ import {
   RequestStates,
   UrlMethod,
 } from './types';
-import { apiRequest, metaWithResponse } from './utils';
+import { apiRequest } from './utils';
 
 export const REQUEST_STATE = 'REQUEST_STATE';
 export function setRequestState(
   actionSet: AsyncActionSet,
   requestState: RequestStates,
   data: any,
-  tag?: string
+  tag: string = ''
 ) {
   return {
     payload: {
@@ -27,7 +27,7 @@ export function setRequestState(
 }
 
 export const RESET_REQUEST_STATE = 'RESET_REQUEST_STATE';
-export function resetRequestState(actionSet: AsyncActionSet, tag?: string) {
+export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   return {
     payload: {
       actionSet,
@@ -42,8 +42,8 @@ export function dispatchGenericRequest(
   url: string,
   method: UrlMethod,
   data?: any,
-  tag?: string,
-  metaData: RequestMetaData = {},
+  tag: string = '',
+  metaData: Partial<RequestMetaData> = {},
   headers: Dict<string> = {}
 ) {
   return (dispatch: Dispatch<any>) => {
@@ -57,7 +57,7 @@ export function dispatchGenericRequest(
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
-          meta: metaWithResponse(meta, response),
+          meta,
         });
         dispatch(setRequestState(actionSet, 'SUCCESS', response, tag));
         return response;
@@ -66,7 +66,7 @@ export function dispatchGenericRequest(
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
-          meta: metaWithResponse(meta, error),
+          meta,
           error: true,
         });
         dispatch(setRequestState(actionSet, 'FAILURE', error, tag));

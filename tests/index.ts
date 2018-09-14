@@ -1,9 +1,11 @@
+import { Dict } from '../src/ts/types';
+
 interface AxiosMock {
   failure: (error: any) => any;
   success: (response: any) => any;
   catch: (fn: (...args: any[]) => any) => any;
   then: (fn: (...args: any[]) => any) => any;
-  params: any;
+  params: Dict<Dict<string> | undefined>;
 }
 
 jest.mock('axios', () => {
@@ -45,13 +47,8 @@ jest.mock('axios', () => {
   };
 });
 
-import { AxiosResponse } from 'axios';
 import { setRequestState } from '../src/ts/actions';
-import {
-  apiRequest,
-  formatQueryParams,
-  metaWithResponse,
-} from '../src/ts/utils';
+import { apiRequest, formatQueryParams } from '../src/ts/utils';
 
 import {
   anyPending,
@@ -62,7 +59,6 @@ import {
   isPending,
   makeAsyncActionSet,
   REQUEST_STATE,
-  RequestMetaData,
   RESET_REQUEST_STATE,
   resetRequestState,
   responsesReducer,
@@ -102,7 +98,7 @@ describe('Requests', () => {
             actionSet: ACTION_SET,
             data: null,
             requestState: STATE,
-            tag: undefined,
+            tag: '',
           },
           type: REQUEST_STATE,
         });
@@ -122,7 +118,7 @@ describe('Requests', () => {
         expect(resetRequestState(ACTION_SET)).toEqual({
           payload: {
             actionSet: ACTION_SET,
-            tag: undefined,
+            tag: '',
           },
           type: RESET_REQUEST_STATE,
         });
@@ -156,9 +152,19 @@ describe('Requests', () => {
       });
 
       it('should allow for Header overrides', () => {
-        const headerThunk = dispatchGenericRequest(ACTION_SET, '/api/url', METHOD, {}, 'tag', {}, { 'header1': 'blah' });
+        const headerThunk = dispatchGenericRequest(
+          ACTION_SET,
+          '/api/url',
+          METHOD,
+          {},
+          'tag',
+          {},
+          { header1: 'blah' }
+        );
         request = (headerThunk(dispatch) as any) as AxiosMock;
-        expect(request.params.headers.header1).toBe('blah');
+        expect(request.params.headers && request.params.headers.header1).toBe(
+          'blah'
+        );
       });
 
       it('should return a thunk for sending a generic request', () => {
@@ -170,7 +176,7 @@ describe('Requests', () => {
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
-            tag: undefined,
+            tag: '',
           },
           type: ACTION_SET.REQUEST,
         });
@@ -203,7 +209,7 @@ describe('Requests', () => {
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
-            tag: undefined,
+            tag: '',
           },
           payload: { data: 'llama' },
           type: ACTION_SET.SUCCESS,
@@ -225,7 +231,7 @@ describe('Requests', () => {
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
-            tag: undefined,
+            tag: '',
           },
           payload: {
             response: {
@@ -244,31 +250,6 @@ describe('Requests', () => {
             undefined
           )
         );
-      });
-    });
-
-    describe('metaWithResponse', () => {
-      const META: RequestMetaData = {};
-
-      it('should return the same meta if the response is not valid', () => {
-        expect(metaWithResponse(META, undefined)).toBe(META);
-        expect(metaWithResponse(META, { data: {} } as AxiosResponse)).toBe(
-          META
-        );
-        expect(metaWithResponse(META, { status: 200 } as AxiosResponse)).toBe(
-          META
-        );
-        expect(metaWithResponse(META, { config: {} } as AxiosResponse)).toBe(
-          META
-        );
-      });
-
-      it('should return meta with response data if the response is valid', () => {
-        const response = { data: {}, status: 200, config: {} } as AxiosResponse;
-        const result = metaWithResponse(META, response);
-
-        expect(result).not.toBe(META);
-        expect(result).toEqual({ response });
       });
     });
   });
@@ -547,7 +528,9 @@ describe('Requests', () => {
           },
         };
         const errorData = getErrorData(responsesState2, ACTION_SET, 'tag');
-        expect(errorData && errorData.response && errorData.response.data).toEqual({
+        expect(
+          errorData && errorData.response && errorData.response.data
+        ).toEqual({
           error: 'Error data!',
         });
       });
