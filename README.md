@@ -18,7 +18,7 @@ You will need Redux-Thunk installed in your project for actions to be correctly 
 
 When defining a new request, you will need to first define an actionset, using `makeAsyncActionSet(ACTION_NAME)`.  This will give you a set of three actions that your reducers can then key off of.
 
-Launching an action is as simple as calling `dispatchGenericRequest`, with the actionset as the first argument, then the URL, then the method, and then the data.  Actions will be dispatched at
+Launching an action is as simple as calling `dispatchGenericRequest`, with the actionset as the first argument, then the URL, then the method, and then the data.  There are also two optional arguments of 'tag', for keeping track of where requests are coming from, and a dictionary of header fields.  Once dispatched, individual actions for REQUEST, SUCCESS and FAILURE will be dispatched, as well as actions to control the REQUEST_STATE, which is consumed by `responsesReducer`, should you choose to use it.
 
 ## Keeping track of request states
 
