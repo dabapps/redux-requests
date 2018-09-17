@@ -1,10 +1,9 @@
-import { AxiosError, AxiosPromise, AxiosResponse, default as axios } from 'axios';
+import { AxiosError, AxiosPromise, default as axios } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
 import {
   AsyncActionSet,
   Dict,
-  RequestMetaData,
   ResponsesReducerState,
   ResponseState,
   UrlMethod,
@@ -87,26 +86,6 @@ export function apiRequest(
     ...config,
     data,
   });
-}
-
-function isResponse(response?: any): response is AxiosResponse {
-  return (
-    typeof response === 'object' &&
-    response.hasOwnProperty('data') &&
-    response.hasOwnProperty('status') &&
-    response.hasOwnProperty('config')
-  );
-}
-
-export function metaWithResponse(
-  meta: RequestMetaData,
-  response?: AxiosResponse
-) {
-  if (!isResponse(response)) {
-    return meta;
-  }
-
-  return { ...meta, response };
 }
 
 function getResponseState(
