@@ -32,7 +32,7 @@ Launching an action is as simple as calling `dispatchGenericRequest`, with the a
 * `meta` - for storing additional data about the request that will not be forwarded to the server.
 * `headers` - for allowing the setting of custom headers on the request.
 
-Once launched, individual actions for REQUEST, SUCCESS and FAILURE will be dispatched, as well as actions to control the REQUEST_STATE, which is consumed by `responsesReducer`, should you choose to use it.
+Once launched, individual actions for `REQUEST`, `SUCCESS` and `FAILURE` will be dispatched, as well as actions to control the `REQUEST_STATE`, which is consumed by `responsesReducer`, should you choose to use it.
 
 ## Keeping track of request states
 
