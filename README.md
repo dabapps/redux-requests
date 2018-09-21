@@ -21,7 +21,8 @@ npm install @dabapps/redux-requests --save
 If you are using a version of npm that doesn't support package lock files, we'd recommend installing with the `--save-exact` flag to pin to a specific version in your package.json.
 
 ## Getting Started
-You will need Redux-Thunk installed in your project for actions to be correctly dispatched.
+
+You will need redux-thunk installed in your project for actions to be correctly dispatched.
 
 When defining a new request, you will need to first define an actionset, using `makeAsyncActionSet(ACTION_NAME)`.  This will give you a set of three actions that your reducers can then key off of.
 
