@@ -14,7 +14,7 @@ Patch version changes will include both minor changes and patches.
 
 Install via NPM:
 
-```
+```shell
 npm install @dabapps/redux-requests --save
 ```
 
@@ -22,20 +22,96 @@ If you are using a version of npm that doesn't support package lock files, we'd 
 
 ## Getting Started
 
+### Prerequisites
+
 You will need redux-thunk installed in your project for actions to be correctly dispatched.
 
-When defining a new request, you will need to first define an actionset, using `makeAsyncActionSet(ACTION_NAME)`.  This will give you a set of three actions that your reducers can then key off of.
+### Creating request actions
 
-Launching an action is as simple as calling `dispatchGenericRequest`, with the actionset as the first argument, then the URL, then the method, and then the data.  There are also three optional arguments
+When defining a new request, you will need to first define an actionset, using `makeAsyncActionSet`.  This will give you a set of three actions that your reducers can then key off of.
+
+```typescript
+const GET_USER = makeAsyncActionSet('GET_USER');
+
+/*
+{
+  REQUEST: 'GET_USER_REQUEST',
+  SUCCESS: 'GET_USER_SUCCESS',
+  FAILURE: 'GET_USER_FAILURE'
+}
+*/
+```
+
+Launching an action is as simple as calling `dispatchGenericRequest`, with the actionset as the first argument, then the URL, then the method, and then the data.
+
+This returns a thunk action, and should be returned from an action creator, as below.
+
+```typescript
+const getUser = (data) => {
+  return dispatchGenericRequest(GET_USER, '/api/user/', 'GET', data);
+};
+```
+
+There are also three optional arguments to `dispatchGenericRequest`:
 
 * `tag` - for name-spacing requests if you plan to make multiple calls to the same point with different parameters.
 * `meta` - for storing additional data about the request that will not be forwarded to the server.
 * `headers` - for allowing the setting of custom headers on the request.
 
+```typescript
+const getUser = (data) => {
+  return dispatchGenericRequest(GET_USER, '/api/user/', 'GET', data, 'users-list', undefined, {Authorization: TOKEN});
+};
+```
+
 Once launched, individual actions for `REQUEST`, `SUCCESS` and `FAILURE` will be dispatched, as well as actions to control the `REQUEST_STATE`, which is consumed by `responsesReducer`, should you choose to use it.
 
-## Keeping track of request states
+### Keeping track of request states and errors
 
 If you do not plan to keep track of the state of requests yourself, we also provide a helper reducer, plus some additional actions for managing its state.
 
-Mount `responsesReducer` in your store, with the type `ResponsesReducerState`.  This will keep track of all requests, accessible via the helper functions `isPending`, `hasFailed`, `hasSucceeded`, and `anyPending`.  An action called `resetRequestState` can be fired to clear out any stored data.
+Mount `responsesReducer` in your store, with the type `ResponsesReducerState`.  This will keep track of all requests, accessible via the helper functions `isPending`, `hasFailed`, `hasSucceeded`, `anyPending`, and `getErrorData`.  An action called `resetRequestState` can be fired to clear out any stored data.
+
+
+```typescript
+interface StoreState {
+  responses: ResponsesReducerState;
+}
+
+const store = createStore(combineReducers({
+  responses: responsesReducer
+}));
+```
+
+To access loading states and error messages with react-redux, you can use the various helper functions within your `mapStateToProps` function.
+
+```typescript
+function mapStateToProps (state: StoreState) {
+  return {
+    userIsLoading: isPending(state.responses, GET_USER),
+    anythingIsLoading: anyPending(state.responses, [UPDATE_USER, GET_USER]),
+    hasErrors: hasFailed(state.responses, GET_USER),
+    errors: getErrorData(state.responses, GET_USER)
+  };
+}
+```
+
+### Keeping track of request data
+
+To store response data you will need to create a custom reducer that handles the various request states.
+
+Here you can handle transforming the responses, and clearing data, for example, upon request, or if a request fails.
+
+```typescript
+function user (state: User | null = null, action: AnyAction) {
+  switch (action.type) {
+    case GET_USER.SUCCESS:
+      return action.payload.data;
+    case GET_USER.REQUEST:
+    case GET_USER.FAILURE:
+      return null;
+    default:
+      return state;
+  }
+}
+```
