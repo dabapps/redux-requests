@@ -9,7 +9,6 @@
   },
   "scripts": {
     "dist": "./scripts/dist",
-    "start": "budo examples/less/index.less examples/ts/index.ts --live -- -t node-lessify -p [tsify -p examples/tsconfig.json]",
     "lint": "tsc --noEmit --project tsconfig.json && npm run prettier-check && tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
     "prettier-check": "diffs=$(prettier --list-different '{src,tests,types,examples,docs}/**/*.ts?(x)'); if [ ! -z $diffs ]; then echo \"Run 'npm run prettier'\nThe following files need formatting:\n$diffs\" && exit 1; fi;",
     "tests": "jest",
