@@ -11,8 +11,6 @@ Install via NPM:
 npm install @dabapps/redux-requests --save
 ```
 
-To install you will need the company npm token set in your env `NPM_TOKEN=` and also add an `./npmrc` file (the same as the one included here), to be able to authenticate with NPM Private Repos.
-
 ## Getting Started
 You will need Redux-Thunk installed in your project for actions to be correctly dispatched.
 
