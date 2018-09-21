@@ -28,7 +28,7 @@
     "dabapps"
   ],
   "author": "DabApps",
-  "license": "UNLICENSED",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/dabapps/redux-requests/issues"
   },
