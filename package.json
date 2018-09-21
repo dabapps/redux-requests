@@ -37,21 +37,18 @@
   "dependencies": {
     "@types/js-cookie": "^2.0.28",
     "@types/node": "^7.0.18",
-    "browserify": "^16.2.2",
-    "tsify": "^3.0.4",
-    "typescript": "^2.9.2",
     "axios": "^0.18.0",
-    "js-cookie": "^2.1.4",
     "flux-standard-action": "^1.2.0",
+    "js-cookie": "^2.1.4",
+    "path": "^0.12.7",
     "redux": "^3.7.2",
-    "path": "^0.12.7"
+    "typescript": "^2.9.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
-    "budo": "^11.3.2",
     "jest": "^23.5.0",
-    "node-lessify": "^0.1.5",
     "prettier": "^1.14.2",
+    "request": "^2.88.0",
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
     "tslint-config-dabapps": "github:dabapps/tslint-config-dabapps#v0.5.1"
