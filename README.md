@@ -24,7 +24,7 @@ If you are using a version of npm that doesn't support package lock files, we'd 
 
 ### Prerequisites
 
-You will need redux-thunk installed in your project for actions to be correctly dispatched.
+You will need redux-thunk installed and applied as a middleware for actions to be correctly dispatched.
 
 ### Creating request actions
 
