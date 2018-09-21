@@ -4,6 +4,12 @@
 
 Simple requests handling, extracted from Redux API Collections
 
+## Disclaimer
+
+This module is in its early stages and until it reaches its first major version it may be unstable, with potentially breaking changes with new minor version releases.
+
+Patch version changes will include both minor changes and patches.
+
 ## Installation
 
 Install via NPM:
