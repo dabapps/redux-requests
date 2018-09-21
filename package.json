@@ -1,7 +1,7 @@
 {
   "name": "@dabapps/redux-requests",
   "version": "0.4.1",
-  "description": "Library for simple Redux Requests",
+  "description": "Library for simple redux requests",
   "main": "dist/js/index.js",
   "directories": {},
   "publishConfig": {
@@ -22,8 +22,10 @@
     "url": "git+https://github.com/dabapps/redux-requests.git"
   },
   "keywords": [
-    "npm",
-    "template",
+    "request",
+    "requests",
+    "responses",
+    "redux",
     "dabapps"
   ],
   "author": "DabApps",
