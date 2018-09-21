@@ -22,8 +22,10 @@
     "url": "git+https://github.com/dabapps/redux-requests.git"
   },
   "keywords": [
-    "npm",
-    "template",
+    "request",
+    "requests",
+    "responses",
+    "redux",
     "dabapps"
   ],
   "author": "DabApps",
