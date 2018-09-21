@@ -5,7 +5,7 @@
   "main": "dist/js/index.js",
   "directories": {},
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "scripts": {
     "dist": "./scripts/dist",
