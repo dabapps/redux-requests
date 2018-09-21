@@ -5,11 +5,14 @@
 Simple requests handling, extracted from Redux API Collections
 
 ## Installation
+
 Install via NPM:
 
 ```
 npm install @dabapps/redux-requests --save
 ```
+
+If you are using a version of npm that doesn't support package lock files, we'd recommend installing with the `--save-exact` flag to pin to a specific version in your package.json.
 
 ## Getting Started
 You will need Redux-Thunk installed in your project for actions to be correctly dispatched.
