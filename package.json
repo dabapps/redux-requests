@@ -1,11 +1,11 @@
 {
   "name": "@dabapps/redux-requests",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Library for simple Redux Requests",
   "main": "dist/js/index.js",
   "directories": {},
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "scripts": {
     "dist": "./scripts/dist",
