@@ -1,3 +1,4 @@
+import { AxiosError, AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
@@ -53,7 +54,7 @@ export function dispatchGenericRequest(
     dispatch(setRequestState(actionSet, 'REQUEST', null, tag));
 
     return apiRequest(url, method, data, headers)
-      .then(response => {
+      .then((response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
@@ -62,7 +63,7 @@ export function dispatchGenericRequest(
         dispatch(setRequestState(actionSet, 'SUCCESS', response, tag));
         return response;
       })
-      .catch(error => {
+      .catch((error: AxiosError) => {
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
