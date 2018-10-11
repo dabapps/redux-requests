@@ -1,4 +1,4 @@
-import { AxiosError, AxiosPromise, default as axios } from 'axios';
+import axios, { AxiosError, AxiosPromise } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
 import {
