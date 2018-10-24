@@ -84,13 +84,7 @@ export function request(
   method: UrlMethod,
   params: RequestParams = {}
 ) {
-  const {
-    headers,
-    data,
-    metaData,
-    tag,
-    shouldRethrow,
-  } = params;
+  const { headers, data, metaData, tag, shouldRethrow } = params;
 
   return (dispatch: Dispatch<any>) => {
     const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
@@ -98,8 +92,8 @@ export function request(
     dispatch({ type: actionSet.REQUEST, meta });
     dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
 
-    return apiRequest(url, method, data, headers || {})
-      .then((response: AxiosResponse) => {
+    return apiRequest(url, method, data, headers || {}).then(
+      (response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
@@ -107,8 +101,8 @@ export function request(
         });
         dispatch(setRequestState(actionSet, 'SUCCESS', response, tag || ''));
         return response;
-      })
-      .catch((error: AxiosError) => {
+      },
+      (error: AxiosError) => {
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
@@ -121,6 +115,7 @@ export function request(
           return Promise.reject(error);
         }
         return Promise.resolve();
-      });
+      }
+    );
   };
 }
