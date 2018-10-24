@@ -4,6 +4,7 @@ import {
   AsyncActionSet,
   Dict,
   RequestMetaData,
+  RequestParams,
   RequestStates,
   UrlMethod,
 } from './types';
@@ -38,6 +39,7 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
+// THIS FUNCTION IS DEPRECATED
 export function dispatchGenericRequest(
   actionSet: AsyncActionSet,
   url: string,
@@ -72,6 +74,53 @@ export function dispatchGenericRequest(
         });
         dispatch(setRequestState(actionSet, 'FAILURE', error, tag));
         return Promise.reject(error);
+      });
+  };
+}
+
+export function request(
+  actionSet: AsyncActionSet,
+  url: string,
+  method: UrlMethod,
+  params: RequestParams = {}
+) {
+  const {
+    headers,
+    data,
+    metaData,
+    tag,
+    shouldRethrow,
+  } = params;
+
+  return (dispatch: Dispatch<any>) => {
+    const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
+
+    dispatch({ type: actionSet.REQUEST, meta });
+    dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
+
+    return apiRequest(url, method, data, headers || {})
+      .then((response: AxiosResponse) => {
+        dispatch({
+          type: actionSet.SUCCESS,
+          payload: response,
+          meta,
+        });
+        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag || ''));
+        return response;
+      })
+      .catch((error: AxiosError) => {
+        dispatch({
+          type: actionSet.FAILURE,
+          payload: error,
+          meta,
+          error: true,
+        });
+        dispatch(setRequestState(actionSet, 'FAILURE', error, tag || ''));
+
+        if (shouldRethrow && shouldRethrow(error)) {
+          return Promise.reject(error);
+        }
+        return Promise.resolve();
       });
   };
 }

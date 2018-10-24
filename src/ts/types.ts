@@ -32,3 +32,11 @@ export type ResetRequestStatePayload = Readonly<{
   actionSet: AsyncActionSet;
   tag?: string;
 }>;
+
+export type RequestParams = Readonly<{
+  tag?: string
+  metaData?: Partial<RequestMetaData>,
+  data?: string | number | Dict<any> | ReadonlyArray<any>,
+  headers?: Dict<string>,
+  shouldRethrow?(errors: AxiosError): boolean,
+}>;
