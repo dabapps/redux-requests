@@ -40,49 +40,10 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
-// THIS FUNCTION IS DEPRECATED
-export function dispatchGenericRequest(
-  actionSet: AsyncActionSet,
-  url: string,
-  method: UrlMethod,
-  data?: any,
-  tag: string = '',
-  metaData: Partial<RequestMetaData> = {},
-  headers: Dict<string> = {}
-) {
-  return (dispatch: Dispatch<any>) => {
-    const meta: RequestMetaData = { ...metaData, tag };
-
-    dispatch({ type: actionSet.REQUEST, meta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, tag));
-
-    return apiRequest(url, method, data, headers)
-      .then((response: AxiosResponse) => {
-        dispatch({
-          type: actionSet.SUCCESS,
-          payload: response,
-          meta,
-        });
-        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag));
-        return response;
-      })
-      .catch((error: AxiosError) => {
-        dispatch({
-          type: actionSet.FAILURE,
-          payload: error,
-          meta,
-          error: true,
-        });
-        dispatch(setRequestState(actionSet, 'FAILURE', error, tag));
-        return Promise.reject(error);
-      });
-  };
-}
-
-export function requestFromFunction (
+export function requestFromFunction(
   actionSet: AsyncActionSet,
   requestBuilder: () => AxiosPromise,
-  params: RequestParams = {},
+  params: RequestParams = {}
 ) {
   const { metaData, tag, shouldRethrow } = params;
 

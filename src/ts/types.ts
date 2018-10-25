@@ -38,7 +38,7 @@ export interface RequestParams {
   readonly metaData?: Partial<RequestMetaData>;
   readonly headers?: Dict<string>;
   shouldRethrow?(errors: AxiosError): boolean;
-};
+}
 
 export interface ExtendedRequestParams extends RequestParams {
   readonly headers?: Dict<string>;
