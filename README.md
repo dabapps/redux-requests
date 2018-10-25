@@ -42,29 +42,40 @@ const GET_USER = makeAsyncActionSet('GET_USER');
 */
 ```
 
-Launching an action is as simple as calling `dispatchGenericRequest`, with the actionset as the first argument, then the URL, then the method, and then the data.
+Launching an action is as simple as calling `request`, with the actionset as the first argument, then the URL, then the method, and then the data.
 
 This returns a thunk action, and should be returned from an action creator, as below.
 
 ```typescript
 const getUser = (data) => {
-  return dispatchGenericRequest(GET_USER, '/api/user/', 'GET', data);
+  return request(GET_USER, '/api/user/', 'GET', data);
 };
 ```
 
-There are also three optional arguments to `dispatchGenericRequest`:
+`request` also takes an additional argument - a dictionary with the following optional keys:
 
 * `tag` - for name-spacing requests if you plan to make multiple calls to the same point with different parameters.
-* `meta` - for storing additional data about the request that will not be forwarded to the server.
+* `metaData` - for storing additional data about the request that will not be forwarded to the server.
 * `headers` - for allowing the setting of custom headers on the request.
+* `shouldRethrow` - a callback that takes the error object, and can return `true` if you want the Promise to fail instead of digest the error.
 
 ```typescript
 const getUser = (data) => {
-  return dispatchGenericRequest(GET_USER, '/api/user/', 'GET', data, 'users-list', undefined, {Authorization: TOKEN});
+  return request(GET_USER, '/api/user/', 'GET', data, {
+    tag: 'users-list',
+    headers: {Authorization: TOKEN}
+  });
 };
 ```
 
 Once launched, individual actions for `REQUEST`, `SUCCESS` and `FAILURE` will be dispatched, as well as actions to control the `REQUEST_STATE`, which is consumed by `responsesReducer`, should you choose to use it.
+
+Internally, `request` uses a function called `requestFromFunction`, which instead wraps a callback that produces an Axios request.  You can use this in advance cases, if you need finer-grained control over how the request is made.
+
+```typescript
+request(GET_USER, () => axios({ /* some config */}), additionalConfig);
+```
+
 
 ### Keeping track of request states and errors
 
