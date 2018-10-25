@@ -1,6 +1,7 @@
 export {
+  request,
   REQUEST_STATE,
-  dispatchGenericRequest,
+  requestFromFunction,
   RESET_REQUEST_STATE,
   resetRequestState,
 } from './actions';

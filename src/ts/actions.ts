@@ -1,9 +1,11 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
+  ExtendedRequestParams,
   RequestMetaData,
+  RequestParams,
   RequestStates,
   UrlMethod,
 } from './types';
@@ -38,40 +40,58 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
-export function dispatchGenericRequest(
+export function requestFromFunction(
   actionSet: AsyncActionSet,
-  url: string,
-  method: UrlMethod,
-  data?: any,
-  tag: string = '',
-  metaData: Partial<RequestMetaData> = {},
-  headers: Dict<string> = {}
+  requestBuilder: () => AxiosPromise,
+  params: RequestParams = {}
 ) {
+  const { metaData, tag, shouldRethrow } = params;
+
   return (dispatch: Dispatch<any>) => {
-    const meta: RequestMetaData = { ...metaData, tag };
+    const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
 
     dispatch({ type: actionSet.REQUEST, meta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, tag));
+    dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
 
-    return apiRequest(url, method, data, headers)
-      .then((response: AxiosResponse) => {
+    return requestBuilder().then(
+      (response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
           meta,
         });
-        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag));
+        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag || ''));
         return response;
-      })
-      .catch((error: AxiosError) => {
+      },
+      (error: AxiosError) => {
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
           meta,
           error: true,
         });
-        dispatch(setRequestState(actionSet, 'FAILURE', error, tag));
-        return Promise.reject(error);
-      });
+        dispatch(setRequestState(actionSet, 'FAILURE', error, tag || ''));
+
+        if (shouldRethrow && shouldRethrow(error)) {
+          return Promise.reject(error);
+        }
+        return Promise.resolve();
+      }
+    );
   };
+}
+
+export function request(
+  actionSet: AsyncActionSet,
+  url: string,
+  method: UrlMethod,
+  data?: string | number | Dict<any> | ReadonlyArray<any>,
+  params: ExtendedRequestParams = {}
+) {
+  const { headers } = params;
+  return requestFromFunction(
+    actionSet,
+    () => apiRequest(url, method, data, headers),
+    params
+  );
 }

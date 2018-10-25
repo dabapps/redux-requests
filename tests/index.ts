@@ -19,14 +19,15 @@ jest.mock('axios', () => {
     headers: {};
     onUploadProgress?: (event: ProgressEvent) => void;
   }) => {
-    const request = {
+    const myRequest = {
       catch(fn: (...args: any[]) => any) {
         failure = fn;
-        return request;
+        return myRequest;
       },
-      then(fn: (...args: any[]) => any) {
+      then(fn: (...args: any[]) => any, fail?: (...args: any[]) => any) {
         success = fn;
-        return request;
+        failure = fail || (() => undefined);
+        return myRequest;
       },
       failure(error: any) {
         return failure(error);
@@ -37,7 +38,7 @@ jest.mock('axios', () => {
       params,
     };
 
-    return request;
+    return myRequest;
   };
 
   (axiosDefault as any).defaults = { headers: { common: {} } };
@@ -52,13 +53,14 @@ import { apiRequest, formatQueryParams } from '../src/ts/utils';
 
 import {
   anyPending,
-  dispatchGenericRequest,
   getErrorData,
   hasFailed,
   hasSucceeded,
   isPending,
   makeAsyncActionSet,
+  request,
   REQUEST_STATE,
+  requestFromFunction,
   RESET_REQUEST_STATE,
   resetRequestState,
   responsesReducer,
@@ -125,11 +127,11 @@ describe('Requests', () => {
       });
     });
 
-    describe('dispatchGenericRequest', () => {
+    describe('request', () => {
       const dispatch = jest.fn();
       const getState = jest.fn();
-      const thunk = dispatchGenericRequest(ACTION_SET, '/api/url/', METHOD);
-      let request: AxiosMock;
+      const thunk = request(ACTION_SET, '/api/url/', METHOD);
+      let myRequest: AxiosMock;
 
       beforeEach(() => {
         dispatch.mockReset();
@@ -137,34 +139,30 @@ describe('Requests', () => {
       });
 
       it('should take a bunch of optional arguments', () => {
-        const requestWithLotsOfParams = dispatchGenericRequest.bind(
+        const requestWithLotsOfParams = request.bind(
           null,
           ACTION_SET,
           '/api/url/',
           METHOD,
           {},
-          'tag',
-          {},
-          {}
+          { tag: 'tag' }
         );
 
         expect(requestWithLotsOfParams).not.toThrowError();
       });
 
       it('should allow for Header overrides', () => {
-        const headerThunk = dispatchGenericRequest(
+        const headerThunk = request(
           ACTION_SET,
           '/api/url',
           METHOD,
           {},
-          'tag',
-          {},
-          { header1: 'blah' }
+          { headers: { header1: 'blah' }, tag: 'tag' }
         );
-        request = (headerThunk(dispatch) as any) as AxiosMock;
-        expect(request.params.headers && request.params.headers.header1).toBe(
-          'blah'
-        );
+        myRequest = (headerThunk(dispatch) as any) as AxiosMock;
+        expect(
+          myRequest.params.headers && myRequest.params.headers.header1
+        ).toBe('blah');
       });
 
       it('should return a thunk for sending a generic request', () => {
@@ -172,7 +170,7 @@ describe('Requests', () => {
       });
 
       it('should dispatch request actions', () => {
-        request = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
+        myRequest = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
@@ -187,23 +185,22 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        request = dispatchGenericRequest(ACTION_SET, '/api//llama/', METHOD)(
+        myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
           dispatch
         ) as any;
-        expect((request as any).params.url).toEqual('/api/llama/');
+        expect((myRequest as any).params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        request = dispatchGenericRequest(
-          ACTION_SET,
-          'http://www.test.com',
-          METHOD
-        )(dispatch) as any;
-        expect((request as any).params.url).toEqual('http://www.test.com');
+        myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
+          dispatch
+        ) as any;
+        expect((myRequest as any).params.url).toEqual('http://www.test.com');
       });
 
       it('should dispatch success actions', () => {
-        request.success({
+        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        myRequest.success({
           data: 'llama',
         });
 
@@ -221,13 +218,12 @@ describe('Requests', () => {
       });
 
       it('should dispatch failure actions', () => {
-        request
-          .failure({
-            response: {
-              data: 'llama',
-            },
-          })
-          .catch(() => null);
+        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        const result = myRequest.failure({
+          response: {
+            data: 'llama',
+          },
+        });
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
@@ -250,6 +246,42 @@ describe('Requests', () => {
             undefined
           )
         );
+        return result.then((data: any) => {
+          expect(data).toBeUndefined();
+        });
+      });
+
+      it('should be possible to force a rethrow', () => {
+        myRequest = request(
+          ACTION_SET,
+          'http://www.test.com',
+          METHOD,
+          undefined,
+          { shouldRethrow: () => true }
+        )(dispatch) as any;
+        return myRequest
+          .failure({
+            response: {
+              data: 'llama',
+            },
+          })
+          .catch((error: any) => {
+            expect(error).toEqual({ response: { data: 'llama' } });
+          });
+      });
+
+      describe('requestFromFunction', () => {
+        it('should provide nice defaults', () => {
+          const success = jest.fn();
+          myRequest = requestFromFunction(
+            ACTION_SET,
+            apiRequest.bind(null, 'http://localhost.com', 'GET')
+          )(dispatch) as any;
+          myRequest.then(success);
+
+          myRequest.success('hi');
+          expect(success).toHaveBeenCalledWith('hi');
+        });
       });
     });
   });
@@ -559,39 +591,39 @@ describe('Requests', () => {
 
   describe('apiRequest', () => {
     it('should provide defaults for data and headers - GET', () => {
-      const request = apiRequest('http://localhost.com', 'GET');
-      const params = (request as any).params;
+      const myRequest = apiRequest('http://localhost.com', 'GET');
+      const params = (myRequest as any).params;
       expect(params.params).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
     it('should provide defaults for data and headers - POST', () => {
-      const request = apiRequest('http://localhost.com', 'POST');
-      const params = (request as any).params;
+      const myRequest = apiRequest('http://localhost.com', 'POST');
+      const params = (myRequest as any).params;
       expect(params.data).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
     it('should carry forward our provided data - GET', () => {
-      const request = apiRequest(
+      const myRequest = apiRequest(
         'http://localhost.com',
         'GET',
         { a: 1 },
         { b: 2 }
       );
-      const params = (request as any).params;
+      const params = (myRequest as any).params;
       expect(params.params).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);
     });
 
     it('should carry forward our provided data - POST', () => {
-      const request = apiRequest(
+      const myRequest = apiRequest(
         'http://localhost.com',
         'POST',
         { a: 1 },
         { b: 2 }
       );
-      const params = (request as any).params;
+      const params = (myRequest as any).params;
       expect(params.data).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);
     });
