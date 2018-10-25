@@ -33,10 +33,13 @@ export type ResetRequestStatePayload = Readonly<{
   tag?: string;
 }>;
 
-export type RequestParams = Readonly<{
-  tag?: string;
-  metaData?: Partial<RequestMetaData>;
-  data?: string | number | Dict<any> | ReadonlyArray<any>;
-  headers?: Dict<string>;
+export interface RequestParams {
+  readonly tag?: string;
+  readonly metaData?: Partial<RequestMetaData>;
+  readonly headers?: Dict<string>;
   shouldRethrow?(errors: AxiosError): boolean;
-}>;
+};
+
+export interface ExtendedRequestParams extends RequestParams {
+  readonly headers?: Dict<string>;
+}

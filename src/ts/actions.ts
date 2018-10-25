@@ -1,8 +1,9 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
+  ExtendedRequestParams,
   RequestMetaData,
   RequestParams,
   RequestStates,
@@ -78,13 +79,12 @@ export function dispatchGenericRequest(
   };
 }
 
-export function request(
+export function requestFromFunction (
   actionSet: AsyncActionSet,
-  url: string,
-  method: UrlMethod,
-  params: RequestParams = {}
+  requestBuilder: () => AxiosPromise,
+  params: RequestParams = {},
 ) {
-  const { headers, data, metaData, tag, shouldRethrow } = params;
+  const { metaData, tag, shouldRethrow } = params;
 
   return (dispatch: Dispatch<any>) => {
     const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
@@ -92,7 +92,7 @@ export function request(
     dispatch({ type: actionSet.REQUEST, meta });
     dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
 
-    return apiRequest(url, method, data, headers || {}).then(
+    return requestBuilder().then(
       (response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
@@ -118,4 +118,19 @@ export function request(
       }
     );
   };
+}
+
+export function request(
+  actionSet: AsyncActionSet,
+  url: string,
+  method: UrlMethod,
+  data?: string | number | Dict<any> | ReadonlyArray<any>,
+  params: ExtendedRequestParams = {}
+) {
+  const { headers } = params;
+  return requestFromFunction(
+    actionSet,
+    () => apiRequest(url, method, data, headers),
+    params
+  );
 }
