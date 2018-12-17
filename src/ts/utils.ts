@@ -51,7 +51,8 @@ export function apiRequest(
   method: UrlMethod,
   data = {},
   headers = {},
-  onUploadProgress?: (event: ProgressEvent) => void
+  onUploadProgress?: (event: ProgressEvent) => void,
+  timeout?: number
 ): AxiosPromise {
   const combinedHeaders = {
     Accept: 'application/json',
@@ -73,6 +74,7 @@ export function apiRequest(
     url: myPath,
     headers: combinedHeaders,
     onUploadProgress,
+    timeout,
   };
 
   // Axios uses a different key for sending data on a GET request

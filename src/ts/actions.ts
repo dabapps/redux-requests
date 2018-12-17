@@ -86,12 +86,13 @@ export function request(
   url: string,
   method: UrlMethod,
   data?: string | number | Dict<any> | ReadonlyArray<any>,
-  params: ExtendedRequestParams = {}
+  params: ExtendedRequestParams = {},
+  timeout?: number
 ) {
   const { headers } = params;
   return requestFromFunction(
     actionSet,
-    () => apiRequest(url, method, data, headers),
+    () => apiRequest(url, method, data, headers, undefined, timeout),
     params
   );
 }
