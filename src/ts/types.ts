@@ -42,4 +42,5 @@ export interface RequestParams {
 
 export interface ExtendedRequestParams extends RequestParams {
   readonly headers?: Dict<string>;
+  readonly timeout?: number;
 }
