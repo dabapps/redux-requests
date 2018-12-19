@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosPromise, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosPromise } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
 import {
@@ -6,6 +6,7 @@ import {
   Dict,
   ResponsesReducerState,
   ResponseState,
+  UrlMethod,
 } from './types';
 
 function asEntries<T>(params: Dict<T>): ReadonlyArray<[string, T]> {
@@ -45,40 +46,48 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
   return '?' + filteredPairs.map(([key, value]) => `${key}=${value}`).join('&');
 }
 
-export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
+export function apiRequest(
+  url: string,
+  method: UrlMethod,
+  data = {},
+  headers = {},
+  onUploadProgress?: (event: ProgressEvent) => void,
+  timeout?: number
+): AxiosPromise {
   const combinedHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
     'X-CSRFToken': Cookies.get('csrftoken'),
-    ...options.headers,
+    ...headers,
   };
 
-  const url = options.url;
   let myPath;
-  if (url) {
-    if (url.split(/:\/\//).length > 1) {
-      myPath = url;
-    } else {
-      myPath = path.normalize(url);
-    }
+  if (url.split(/:\/\//).length > 1) {
+    myPath = url;
+  } else {
+    myPath = path.normalize(url);
   }
 
   const config = {
-    ...options,
+    method,
     url: myPath,
     headers: combinedHeaders,
-    data: options.data || {},
+    onUploadProgress,
+    timeout,
   };
 
   // Axios uses a different key for sending data on a GET request
-  if (options.method === 'GET') {
+  if (method === 'GET') {
     return axios({
       ...config,
-      params: config.data,
+      params: data,
     });
   }
-  return axios(config);
+  return axios({
+    ...config,
+    data,
+  });
 }
 
 function getResponseState(
