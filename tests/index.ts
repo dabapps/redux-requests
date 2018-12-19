@@ -152,18 +152,16 @@ describe('Requests', () => {
       });
 
       it('should allow for setting axiosConfig options', () => {
-        const headerThunk = request(
+        const timeoutThunk = request(
           ACTION_SET,
           '/api/url',
           METHOD,
           {},
           {
-            headers: { header1: 'blah' },
-            tag: 'tag',
             axiosConfig: { timeout: 10 },
           }
         );
-        myRequest = (headerThunk(dispatch) as any) as AxiosMock;
+        myRequest = (timeoutThunk(dispatch) as any) as AxiosMock;
         expect(myRequest.params.timeout).toEqual(10);
       });
 
