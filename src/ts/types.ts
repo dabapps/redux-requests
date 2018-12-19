@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type Dict<T> = Readonly<{ [key: string]: T }>;
 
@@ -42,5 +42,5 @@ export interface RequestParams {
 
 export interface ExtendedRequestParams extends RequestParams {
   readonly headers?: Dict<string>;
-  readonly timeout?: number;
+  readonly axiosConfig?: AxiosRequestConfig;
 }
