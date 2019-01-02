@@ -130,7 +130,7 @@ describe('Requests', () => {
     describe('request', () => {
       const dispatch = jest.fn();
       const getState = jest.fn();
-      const thunk = request(ACTION_SET, '/api/url/', METHOD);
+      const thunk = request(ACTION_SET, { url: '/api/url/', method: METHOD });
       let myRequest: AxiosMock;
 
       beforeEach(() => {
@@ -142,9 +142,10 @@ describe('Requests', () => {
         const requestWithLotsOfParams = request.bind(
           null,
           ACTION_SET,
-          '/api/url/',
-          METHOD,
-          {},
+          {
+            url: '/api/url/',
+            method: METHOD,
+          },
           { tag: 'tag' }
         );
 
@@ -154,10 +155,12 @@ describe('Requests', () => {
       it('should allow for Header overrides', () => {
         const headerThunk = request(
           ACTION_SET,
-          '/api/url',
-          METHOD,
-          {},
-          { headers: { header1: 'blah' }, tag: 'tag' }
+          {
+            url: '/api/url',
+            method: METHOD,
+            headers: { header1: 'blah' },
+          },
+          { tag: 'tag' }
         );
         myRequest = (headerThunk(dispatch) as any) as AxiosMock;
         expect(
@@ -185,16 +188,18 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
-          dispatch
-        ) as any;
+        myRequest = request(ACTION_SET, {
+          url: '/api//llama/',
+          method: METHOD,
+        })(dispatch) as any;
         expect((myRequest as any).params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
-          dispatch
-        ) as any;
+        myRequest = request(ACTION_SET, {
+          url: 'http://www.test.com',
+          method: METHOD,
+        })(dispatch) as any;
         expect((myRequest as any).params.url).toEqual('http://www.test.com');
       });
 
@@ -254,9 +259,10 @@ describe('Requests', () => {
       it('should be possible to force a rethrow', () => {
         myRequest = request(
           ACTION_SET,
-          'http://www.test.com',
-          METHOD,
-          undefined,
+          {
+            url: 'http://www.test.com',
+            method: METHOD,
+          },
           { shouldRethrow: () => true }
         )(dispatch) as any;
         return myRequest
@@ -275,7 +281,10 @@ describe('Requests', () => {
           const success = jest.fn();
           myRequest = requestFromFunction(
             ACTION_SET,
-            apiRequest.bind(null, 'http://localhost.com', 'GET')
+            apiRequest.bind(null, {
+              url: 'http://localhost.com',
+              method: 'GET',
+            })
           )(dispatch) as any;
           myRequest.then(success);
 
@@ -591,38 +600,52 @@ describe('Requests', () => {
 
   describe('apiRequest', () => {
     it('should provide defaults for data and headers - GET', () => {
-      const myRequest = apiRequest('http://localhost.com', 'GET');
+      const myRequest = apiRequest({
+        url: 'http://localhost.com',
+        method: 'GET',
+      });
       const params = (myRequest as any).params;
       expect(params.params).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
+    it('should not modify url if not provided', () => {
+      const myRequest = apiRequest({
+        method: 'GET',
+      });
+      const params = (myRequest as any).params;
+      expect(params.url).toEqual(undefined);
+    });
+
     it('should provide defaults for data and headers - POST', () => {
-      const myRequest = apiRequest('http://localhost.com', 'POST');
+      const myRequest = apiRequest({
+        url: 'http://localhost.com',
+        method: 'POST',
+      });
       const params = (myRequest as any).params;
       expect(params.data).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
     it('should carry forward our provided data - GET', () => {
-      const myRequest = apiRequest(
-        'http://localhost.com',
-        'GET',
-        { a: 1 },
-        { b: 2 }
-      );
+      const myRequest = apiRequest({
+        url: 'http://localhost.com',
+        method: 'GET',
+        data: { a: 1 },
+        headers: { b: 2 },
+      });
       const params = (myRequest as any).params;
       expect(params.params).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);
     });
 
     it('should carry forward our provided data - POST', () => {
-      const myRequest = apiRequest(
-        'http://localhost.com',
-        'POST',
-        { a: 1 },
-        { b: 2 }
-      );
+      const myRequest = apiRequest({
+        url: 'http://localhost.com',
+        method: 'POST',
+        data: { a: 1 },
+        headers: { b: 2 },
+      });
       const params = (myRequest as any).params;
       expect(params.data).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);

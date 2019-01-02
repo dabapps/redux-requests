@@ -1,13 +1,16 @@
-import { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+import {
+  AxiosError,
+  AxiosPromise,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
-  Dict,
   ExtendedRequestParams,
   RequestMetaData,
   RequestParams,
   RequestStates,
-  UrlMethod,
 } from './types';
 import { apiRequest } from './utils';
 
@@ -83,15 +86,8 @@ export function requestFromFunction(
 
 export function request(
   actionSet: AsyncActionSet,
-  url: string,
-  method: UrlMethod,
-  data?: string | number | Dict<any> | ReadonlyArray<any>,
+  axoisOptions: AxiosRequestConfig,
   params: ExtendedRequestParams = {}
 ) {
-  const { headers } = params;
-  return requestFromFunction(
-    actionSet,
-    () => apiRequest(url, method, data, headers, undefined, params.timeout),
-    params
-  );
+  return requestFromFunction(actionSet, () => apiRequest(axoisOptions), params);
 }
