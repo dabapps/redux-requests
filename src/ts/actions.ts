@@ -1,18 +1,12 @@
-import {
-  AxiosError,
-  AxiosPromise,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
-  ExtendedRequestParams,
-  RequestMetaData,
+  Meta,
+  Options,
   RequestParams,
   RequestStates,
-  RequestWithConfigParams,
   UrlMethod,
 } from './types';
 import { apiRequest } from './utils';
@@ -46,53 +40,58 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
-export function requestFromFunction(
-  actionSet: AsyncActionSet,
-  requestBuilder: () => AxiosPromise,
-  params: RequestParams = {}
-) {
-  const { metaData, tag, shouldRethrow } = params;
-
-  return (dispatch: Dispatch<any>) => {
-    const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
-
-    dispatch({ type: actionSet.REQUEST, meta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
-
-    return requestBuilder().then(
-      (response: AxiosResponse) => {
-        dispatch({
-          type: actionSet.SUCCESS,
-          payload: response,
-          meta,
-        });
-        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag || ''));
-        return response;
-      },
-      (error: AxiosError) => {
-        dispatch({
-          type: actionSet.FAILURE,
-          payload: error,
-          meta,
-          error: true,
-        });
-        dispatch(setRequestState(actionSet, 'FAILURE', error, tag || ''));
-
-        if (shouldRethrow && shouldRethrow(error)) {
-          return Promise.reject(error);
-        }
-        return Promise.resolve();
-      }
-    );
+function serializeMeta(meta: Partial<Meta>): Meta {
+  return {
+    ...meta,
+    tag: meta.tag || '',
   };
 }
 
 export function requestWithConfig(
   actionSet: AsyncActionSet,
-  axoisOptions: AxiosRequestConfig,
-  params: RequestParams = {}
+  axoisConfig: AxiosRequestConfig,
+  meta: Partial<Meta> = {},
+  options: Options = {}
 ) {
-  return requestFromFunction(actionSet, () => apiRequest(axoisOptions), params);
+  return (dispatch: Dispatch<any>) => {
+    const serializedMeta: Meta = serializeMeta(meta);
+
+    dispatch({ type: actionSet.REQUEST, meta: serializedMeta });
+    dispatch(setRequestState(actionSet, 'REQUEST', null, serializedMeta.tag));
+
+    return apiRequest(axoisConfig).then(
+      (response: AxiosResponse) => {
+        dispatch({
+          type: actionSet.SUCCESS,
+          payload: response,
+          meta: serializedMeta,
+        });
+        dispatch(
+          setRequestState(actionSet, 'SUCCESS', response, serializedMeta.tag)
+        );
+        return response;
+      },
+      (error: AxiosError) => {
+        const { shouldRethrow } = options;
+
+        dispatch({
+          type: actionSet.FAILURE,
+          payload: error,
+          meta: serializedMeta,
+          error: true,
+        });
+        dispatch(
+          setRequestState(actionSet, 'FAILURE', error, serializedMeta.tag)
+        );
+
+        if (shouldRethrow && shouldRethrow(error)) {
+          return Promise.reject(error);
+        }
+
+        return Promise.resolve();
+      }
+    );
+  };
 }
 
 export function request(
@@ -100,8 +99,13 @@ export function request(
   url: string,
   method: UrlMethod,
   data?: string | number | Dict<any> | ReadonlyArray<any>,
-  params: ExtendedRequestParams = {}
+  params: RequestParams = {}
 ) {
-  const { headers } = params;
-  return requestWithConfig(actionSet, { url, method, data, headers }, params);
+  const { headers, tag, metaData, shouldRethrow } = params;
+  return requestWithConfig(
+    actionSet,
+    { url, method, data, headers },
+    { tag, ...metaData },
+    { shouldRethrow }
+  );
 }

@@ -60,7 +60,6 @@ import {
   makeAsyncActionSet,
   request,
   REQUEST_STATE,
-  requestFromFunction,
   RESET_REQUEST_STATE,
   resetRequestState,
   responsesReducer,
@@ -267,20 +266,6 @@ describe('Requests', () => {
           .catch((error: any) => {
             expect(error).toEqual({ response: { data: 'llama' } });
           });
-      });
-
-      describe('requestFromFunction', () => {
-        it('should provide nice defaults', () => {
-          const success = jest.fn();
-          myRequest = requestFromFunction(
-            ACTION_SET,
-            apiRequest.bind(null, 'http://localhost.com', 'GET')
-          )(dispatch) as any;
-          myRequest.then(success);
-
-          myRequest.success('hi');
-          expect(success).toHaveBeenCalledWith('hi');
-        });
       });
     });
 
