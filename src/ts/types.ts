@@ -42,3 +42,8 @@ export interface RequestParams {
 export interface ExtendedRequestParams extends RequestParams {
   readonly headers?: Dict<string>;
 }
+
+export type RequestWithConfigParams = Pick<
+  RequestParams,
+  Exclude<keyof RequestParams, 'metaData'>
+>;

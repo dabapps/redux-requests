@@ -12,6 +12,7 @@ import {
   RequestMetaData,
   RequestParams,
   RequestStates,
+  RequestWithConfigParams,
   UrlMethod,
 } from './types';
 import { apiRequest } from './utils';
@@ -89,7 +90,7 @@ export function requestFromFunction(
 export function requestWithConfig(
   actionSet: AsyncActionSet,
   axoisOptions: AxiosRequestConfig,
-  params: ExtendedRequestParams = {}
+  params: RequestWithConfigParams = {}
 ) {
   return requestFromFunction(actionSet, () => apiRequest(axoisOptions), params);
 }
