@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosPromise, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosPromise } from 'axios';
 import * as Cookies from 'js-cookie';
 import * as path from 'path';
 import {
@@ -52,7 +52,7 @@ export function apiRequest(
   data = {},
   headers = {},
   onUploadProgress?: (event: ProgressEvent) => void,
-  axiosConfig?: AxiosRequestConfig
+  timeout?: number
 ): AxiosPromise {
   const combinedHeaders = {
     Accept: 'application/json',
@@ -70,11 +70,11 @@ export function apiRequest(
   }
 
   const config = {
-    ...axiosConfig,
     method,
     url: myPath,
     headers: combinedHeaders,
     onUploadProgress,
+    timeout,
   };
 
   // Axios uses a different key for sending data on a GET request

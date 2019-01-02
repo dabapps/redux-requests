@@ -151,20 +151,6 @@ describe('Requests', () => {
         expect(requestWithLotsOfParams).not.toThrowError();
       });
 
-      it('should allow for setting axiosConfig options', () => {
-        const timeoutThunk = request(
-          ACTION_SET,
-          '/api/url',
-          METHOD,
-          {},
-          {
-            axiosConfig: { timeout: 10 },
-          }
-        );
-        myRequest = (timeoutThunk(dispatch) as any) as AxiosMock;
-        expect(myRequest.params.timeout).toEqual(10);
-      });
-
       it('should allow for Header overrides', () => {
         const headerThunk = request(
           ACTION_SET,

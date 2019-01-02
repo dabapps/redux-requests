@@ -91,7 +91,7 @@ export function request(
   const { headers } = params;
   return requestFromFunction(
     actionSet,
-    () => apiRequest(url, method, data, headers, undefined, params.axiosConfig),
+    () => apiRequest(url, method, data, headers, undefined, params.timeout),
     params
   );
 }
