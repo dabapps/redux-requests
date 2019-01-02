@@ -7,10 +7,12 @@ import {
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
+  Dict,
   ExtendedRequestParams,
   RequestMetaData,
   RequestParams,
   RequestStates,
+  UrlMethod,
 } from './types';
 import { apiRequest } from './utils';
 
@@ -84,10 +86,21 @@ export function requestFromFunction(
   };
 }
 
-export function request(
+export function requestWithConfig(
   actionSet: AsyncActionSet,
   axoisOptions: AxiosRequestConfig,
   params: ExtendedRequestParams = {}
 ) {
   return requestFromFunction(actionSet, () => apiRequest(axoisOptions), params);
+}
+
+export function request(
+  actionSet: AsyncActionSet,
+  url: string,
+  method: UrlMethod,
+  data?: string | number | Dict<any> | ReadonlyArray<any>,
+  params: ExtendedRequestParams = {}
+) {
+  const { headers } = params;
+  return requestWithConfig(actionSet, { url, method, data, headers }, params);
 }

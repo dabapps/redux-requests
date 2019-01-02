@@ -48,7 +48,7 @@ jest.mock('axios', () => {
   };
 });
 
-import { setRequestState } from '../src/ts/actions';
+import { requestWithConfig, setRequestState } from '../src/ts/actions';
 import { apiRequest, formatQueryParams } from '../src/ts/utils';
 
 import {
@@ -130,7 +130,7 @@ describe('Requests', () => {
     describe('request', () => {
       const dispatch = jest.fn();
       const getState = jest.fn();
-      const thunk = request(ACTION_SET, { url: '/api/url/', method: METHOD });
+      const thunk = request(ACTION_SET, '/api/url/', METHOD);
       let myRequest: AxiosMock;
 
       beforeEach(() => {
@@ -142,10 +142,9 @@ describe('Requests', () => {
         const requestWithLotsOfParams = request.bind(
           null,
           ACTION_SET,
-          {
-            url: '/api/url/',
-            method: METHOD,
-          },
+          '/api/url/',
+          METHOD,
+          {},
           { tag: 'tag' }
         );
 
@@ -155,12 +154,10 @@ describe('Requests', () => {
       it('should allow for Header overrides', () => {
         const headerThunk = request(
           ACTION_SET,
-          {
-            url: '/api/url',
-            method: METHOD,
-            headers: { header1: 'blah' },
-          },
-          { tag: 'tag' }
+          '/api/url',
+          METHOD,
+          {},
+          { headers: { header1: 'blah' }, tag: 'tag' }
         );
         myRequest = (headerThunk(dispatch) as any) as AxiosMock;
         expect(
@@ -171,7 +168,6 @@ describe('Requests', () => {
       it('should return a thunk for sending a generic request', () => {
         expect(typeof thunk).toBe('function');
       });
-
       it('should dispatch request actions', () => {
         myRequest = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
 
@@ -188,18 +184,16 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        myRequest = request(ACTION_SET, {
-          url: '/api//llama/',
-          method: METHOD,
-        })(dispatch) as any;
+        myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
+          dispatch
+        ) as any;
         expect((myRequest as any).params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        myRequest = request(ACTION_SET, {
-          url: 'http://www.test.com',
-          method: METHOD,
-        })(dispatch) as any;
+        myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
+          dispatch
+        ) as any;
         expect((myRequest as any).params.url).toEqual('http://www.test.com');
       });
 
@@ -259,10 +253,9 @@ describe('Requests', () => {
       it('should be possible to force a rethrow', () => {
         myRequest = request(
           ACTION_SET,
-          {
-            url: 'http://www.test.com',
-            method: METHOD,
-          },
+          'http://www.test.com',
+          METHOD,
+          undefined,
           { shouldRethrow: () => true }
         )(dispatch) as any;
         return myRequest
@@ -281,16 +274,39 @@ describe('Requests', () => {
           const success = jest.fn();
           myRequest = requestFromFunction(
             ACTION_SET,
-            apiRequest.bind(null, {
-              url: 'http://localhost.com',
-              method: 'GET',
-            })
+            apiRequest.bind(null, 'http://localhost.com', 'GET')
           )(dispatch) as any;
           myRequest.then(success);
 
           myRequest.success('hi');
           expect(success).toHaveBeenCalledWith('hi');
         });
+      });
+    });
+
+    describe('requestWithConfig', () => {
+      const thunk = requestWithConfig(ACTION_SET, {
+        url: '/api/url/',
+        method: METHOD,
+      });
+      const dispatch = jest.fn();
+
+      it('should return a thunk for sending a generic request', () => {
+        expect(typeof thunk).toBe('function');
+      });
+      it('should set url', () => {
+        const myRequest = requestWithConfig(ACTION_SET, {
+          url: 'http://www.test.com',
+          method: METHOD,
+        })(dispatch) as any;
+        expect((myRequest as any).params.url).toEqual('http://www.test.com');
+      });
+      it('should set method', () => {
+        const myRequest = requestWithConfig(ACTION_SET, {
+          url: 'http://www.test.com',
+          method: METHOD,
+        })(dispatch) as any;
+        expect((myRequest as any).params.method).toEqual(METHOD);
       });
     });
   });
