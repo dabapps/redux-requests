@@ -54,21 +54,19 @@ export function requestWithConfig(
   extraMeta: Partial<ExtraMeta> = {}
 ) {
   return (dispatch: Dispatch<any>) => {
-    const serializedMeta = serializeMeta(extraMeta, options);
+    const meta = serializeMeta(extraMeta, options);
 
-    dispatch({ type: actionSet.REQUEST, meta: serializedMeta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, serializedMeta.tag));
+    dispatch({ type: actionSet.REQUEST, meta });
+    dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag));
 
     return apiRequest(axoisConfig).then(
       (response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
-          meta: serializedMeta,
+          meta,
         });
-        dispatch(
-          setRequestState(actionSet, 'SUCCESS', response, serializedMeta.tag)
-        );
+        dispatch(setRequestState(actionSet, 'SUCCESS', response, meta.tag));
         return response;
       },
       (error: AxiosError) => {
@@ -77,12 +75,10 @@ export function requestWithConfig(
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
-          meta: serializedMeta,
+          meta,
           error: true,
         });
-        dispatch(
-          setRequestState(actionSet, 'FAILURE', error, serializedMeta.tag)
-        );
+        dispatch(setRequestState(actionSet, 'FAILURE', error, meta.tag));
 
         if (shouldRethrow && shouldRethrow(error)) {
           return Promise.reject(error);
