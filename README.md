@@ -68,7 +68,7 @@ const getUser = (data) => {
 };
 ```
 
-If you need to pass additional parameters to the Axios call, We supply an additional function `requestWithConfig`. Using this you can pass any additional option that Axios can handle.
+If you need to pass additional parameters to the Axios call, we supply an additional function `requestWithConfig`. Using this you can pass any additional option that Axios can handle.
 
 * `actionSet` - Async action set.
 * `axoisConfig` - Axios configuration object as described in [the axios documentation](https://github.com/axios/axios).
