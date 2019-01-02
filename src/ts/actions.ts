@@ -90,7 +90,7 @@ export function requestFromFunction(
 export function requestWithConfig(
   actionSet: AsyncActionSet,
   axoisOptions: AxiosRequestConfig,
-  params: RequestWithConfigParams = {}
+  params: RequestParams = {}
 ) {
   return requestFromFunction(actionSet, () => apiRequest(axoisOptions), params);
 }
