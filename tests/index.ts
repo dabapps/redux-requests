@@ -293,6 +293,21 @@ describe('Requests', () => {
         })(dispatch) as any;
         expect((myRequest as any).params.method).toEqual(METHOD);
       });
+      it('should take extra meta but not override the tag', () => {
+        requestWithConfig(
+          ACTION_SET,
+          {
+            url: 'http://www.test.com',
+            method: METHOD,
+          },
+          { tag: 'example-tag' },
+          { tag: 'meta-tag', extraData: 'more-data' }
+        )(dispatch);
+        expect(dispatch).toHaveBeenCalledWith({
+          meta: { extraData: 'more-data', tag: 'example-tag' },
+          type: 'REQUEST',
+        });
+      });
     });
   });
 

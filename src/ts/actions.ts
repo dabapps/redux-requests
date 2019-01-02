@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
-  Meta,
+  ExtraMeta,
   Options,
   RequestParams,
   RequestStates,
@@ -40,21 +40,21 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
-function serializeMeta(meta: Partial<Meta>): Meta {
+function serializeMeta(meta: Partial<ExtraMeta>, options: Options): ExtraMeta {
   return {
     ...meta,
-    tag: meta.tag || '',
+    tag: options.tag || '',
   };
 }
 
 export function requestWithConfig(
   actionSet: AsyncActionSet,
   axoisConfig: AxiosRequestConfig,
-  meta: Partial<Meta> = {},
-  options: Options = {}
+  options: Options = {},
+  extraMeta: Partial<ExtraMeta> = {}
 ) {
   return (dispatch: Dispatch<any>) => {
-    const serializedMeta: Meta = serializeMeta(meta);
+    const serializedMeta = serializeMeta(extraMeta, options);
 
     dispatch({ type: actionSet.REQUEST, meta: serializedMeta });
     dispatch(setRequestState(actionSet, 'REQUEST', null, serializedMeta.tag));
@@ -105,7 +105,7 @@ export function request(
   return requestWithConfig(
     actionSet,
     { url, method, data, headers },
-    { tag, ...metaData },
-    { shouldRethrow }
+    { tag, shouldRethrow },
+    metaData
   );
 }
