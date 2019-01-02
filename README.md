@@ -68,6 +68,30 @@ const getUser = (data) => {
 };
 ```
 
+If you need to pass additional parameters to the Axios call, we supply an additional function `requestWithConfig`. Using this you can pass any additional option that Axios can handle.
+
+* `actionSet` - Async action set.
+* `axoisConfig` - Axios configuration object as described in [the axios documentation](https://github.com/axios/axios).
+* `options` - An options object, containing the optional parameters `shouldRethrow` and `tag`.
+* `extraMeta` - Additional meta data in the form of a Dict.
+
+```typescript
+const getUser = (data) => {
+  return requestWithConfig(GET_USER, {
+      url: '/api/user/',
+      method: 'GET',
+      data: data,
+      headers: {Authorization: TOKEN}
+    }, {
+      tag: 'users-list'
+    },
+    {
+      userId: user.id,
+      userName: user.name
+    })
+}
+```
+
 Once launched, individual actions for `REQUEST`, `SUCCESS` and `FAILURE` will be dispatched, as well as actions to control the `REQUEST_STATE`, which is consumed by `responsesReducer`, should you choose to use it.
 
 Internally, `request` uses a function called `requestFromFunction`, which instead wraps a callback that produces an Axios request.  You can use this in advance cases, if you need finer-grained control over how the request is made.

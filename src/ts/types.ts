@@ -5,9 +5,7 @@ export type Dict<T> = Readonly<{ [key: string]: T }>;
 export type RequestStates = 'REQUEST' | 'SUCCESS' | 'FAILURE';
 export type UrlMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'PATCH';
 
-export type RequestMetaData = {
-  readonly tag: string;
-} & Dict<any>;
+export type ExtraMeta = Dict<any>;
 
 export type AsyncActionSet = Readonly<{
   FAILURE: string;
@@ -33,13 +31,12 @@ export type ResetRequestStatePayload = Readonly<{
   tag?: string;
 }>;
 
-export interface RequestParams {
+export interface Options {
   readonly tag?: string;
-  readonly metaData?: Partial<RequestMetaData>;
-  readonly headers?: Dict<string>;
   shouldRethrow?(errors: AxiosError): boolean;
 }
 
-export interface ExtendedRequestParams extends RequestParams {
+export interface RequestParams extends Options {
+  readonly metaData?: ExtraMeta;
   readonly headers?: Dict<string>;
 }

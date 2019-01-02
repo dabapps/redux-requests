@@ -1,10 +1,10 @@
-import { AxiosError, AxiosPromise, AxiosResponse } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
-  ExtendedRequestParams,
-  RequestMetaData,
+  ExtraMeta,
+  Options,
   RequestParams,
   RequestStates,
   UrlMethod,
@@ -40,41 +40,50 @@ export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
   };
 }
 
-export function requestFromFunction(
-  actionSet: AsyncActionSet,
-  requestBuilder: () => AxiosPromise,
-  params: RequestParams = {}
-) {
-  const { metaData, tag, shouldRethrow } = params;
+function serializeMeta(meta: Partial<ExtraMeta>, options: Options): ExtraMeta {
+  return {
+    ...meta,
+    tag: options.tag || '',
+  };
+}
 
+export function requestWithConfig(
+  actionSet: AsyncActionSet,
+  axoisConfig: AxiosRequestConfig,
+  options: Options = {},
+  extraMeta: Partial<ExtraMeta> = {}
+) {
   return (dispatch: Dispatch<any>) => {
-    const meta: RequestMetaData = { ...(metaData || {}), tag: tag || '' };
+    const meta = serializeMeta(extraMeta, options);
 
     dispatch({ type: actionSet.REQUEST, meta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, tag || ''));
+    dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag));
 
-    return requestBuilder().then(
+    return apiRequest(axoisConfig).then(
       (response: AxiosResponse) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
           meta,
         });
-        dispatch(setRequestState(actionSet, 'SUCCESS', response, tag || ''));
+        dispatch(setRequestState(actionSet, 'SUCCESS', response, meta.tag));
         return response;
       },
       (error: AxiosError) => {
+        const { shouldRethrow } = options;
+
         dispatch({
           type: actionSet.FAILURE,
           payload: error,
           meta,
           error: true,
         });
-        dispatch(setRequestState(actionSet, 'FAILURE', error, tag || ''));
+        dispatch(setRequestState(actionSet, 'FAILURE', error, meta.tag));
 
         if (shouldRethrow && shouldRethrow(error)) {
           return Promise.reject(error);
         }
+
         return Promise.resolve();
       }
     );
@@ -86,12 +95,13 @@ export function request(
   url: string,
   method: UrlMethod,
   data?: string | number | Dict<any> | ReadonlyArray<any>,
-  params: ExtendedRequestParams = {}
+  params: RequestParams = {}
 ) {
-  const { headers } = params;
-  return requestFromFunction(
+  const { headers, tag, metaData, shouldRethrow } = params;
+  return requestWithConfig(
     actionSet,
-    () => apiRequest(url, method, data, headers),
-    params
+    { url, method, data, headers },
+    { tag, shouldRethrow },
+    metaData
   );
 }
