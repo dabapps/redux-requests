@@ -68,7 +68,7 @@ export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
     ...options,
     url: myPath,
     headers: combinedHeaders,
-    data: options.data || {},
+    data: options.data || undefined,
   };
 
   // Axios uses a different key for sending data on a GET request
