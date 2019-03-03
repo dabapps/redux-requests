@@ -621,7 +621,7 @@ describe('Requests', () => {
         method: 'GET',
       });
       const params = (myRequest as any).params;
-      expect(params.params).toEqual(undefined);
+      expect(params.params).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
@@ -639,7 +639,7 @@ describe('Requests', () => {
         method: 'POST',
       });
       const params = (myRequest as any).params;
-      expect(params.data).toEqual(undefined);
+      expect(params.data).toEqual({});
       expect(params.headers).not.toBeUndefined();
     });
 
