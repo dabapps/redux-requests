@@ -623,6 +623,7 @@ describe('Requests', () => {
       const params = (myRequest as any).params;
       expect(params.params).toEqual({});
       expect(params.headers).not.toBeUndefined();
+      expect(params).not.toHaveProperty('data');
     });
 
     it('should not modify url if not provided', () => {
@@ -653,6 +654,7 @@ describe('Requests', () => {
       const params = (myRequest as any).params;
       expect(params.params).toEqual({ a: 1 });
       expect(params.headers.b).toBe(2);
+      expect(params).not.toHaveProperty('data');
     });
 
     it('should carry forward our provided data - POST', () => {

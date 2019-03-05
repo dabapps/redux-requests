@@ -76,7 +76,7 @@ export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
     const { data, ...getConfig } = config;
     return axios({
       ...getConfig,
-      params: config.data,
+      params: data,
     });
   }
   return axios(config);
