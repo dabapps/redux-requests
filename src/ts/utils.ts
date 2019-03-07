@@ -73,9 +73,10 @@ export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
 
   // Axios uses a different key for sending data on a GET request
   if (options.method === 'GET') {
+    const { data, ...getConfig } = config;
     return axios({
-      ...config,
-      params: config.data,
+      ...getConfig,
+      params: data,
     });
   }
   return axios(config);
