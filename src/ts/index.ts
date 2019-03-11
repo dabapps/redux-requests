@@ -8,10 +8,11 @@ export {
 export { responsesReducer } from './reducers';
 export * from './types';
 export {
-  makeAsyncActionSet,
-  isPending,
-  hasSucceeded,
-  hasFailed,
   anyPending,
+  formatQueryParams,
   getErrorData,
+  hasFailed,
+  hasSucceeded,
+  isPending,
+  makeAsyncActionSet,
 } from './utils';
