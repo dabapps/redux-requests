@@ -11,7 +11,7 @@
     "dist": "./scripts/dist",
     "lint": "tsc --noEmit --project tsconfig.json && npm run prettier-check && tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
     "prettier-check": "./scripts/prettier-check",
-    "prettier": "prettier --write \"static/src/{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}\"",
+    "prettier": "prettier --write \"{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}\"",
     "tests": "jest",
     "test": "npm run lint && npm run tests -- --runInBand --coverage",
     "prepublishOnly": "npm test && npm run dist"
