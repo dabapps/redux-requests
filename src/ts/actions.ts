@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import {
   AsyncActionSet,
   Dict,
+  ErrorOrResponse,
   ExtraMeta,
   Options,
   RequestParams,
@@ -53,7 +54,7 @@ export function requestWithConfig(
   options: Options = {},
   extraMeta: Partial<ExtraMeta> = {}
 ) {
-  return (dispatch: Dispatch<any>) => {
+  return (dispatch: Dispatch<any>): Promise<ErrorOrResponse> => {
     const meta = serializeMeta(extraMeta, options);
 
     dispatch({ type: actionSet.REQUEST, meta });
@@ -67,7 +68,7 @@ export function requestWithConfig(
           meta,
         });
         dispatch(setRequestState(actionSet, 'SUCCESS', response, meta.tag));
-        return response;
+        return Promise.resolve([null, response] as ErrorOrResponse);
       },
       (error: AxiosError) => {
         const { shouldRethrow } = options;
@@ -81,10 +82,10 @@ export function requestWithConfig(
         dispatch(setRequestState(actionSet, 'FAILURE', error, meta.tag));
 
         if (shouldRethrow && shouldRethrow(error)) {
-          return Promise.reject(error);
+          return Promise.reject([error, null] as ErrorOrResponse);
         }
 
-        return Promise.resolve();
+        return Promise.resolve([error, null] as ErrorOrResponse);
       }
     );
   };
