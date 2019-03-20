@@ -10,8 +10,8 @@
   "scripts": {
     "dist": "./scripts/dist",
     "lint": "tsc --noEmit --project tsconfig.json && npm run prettier-check && tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
-    "prettier-check": "./scripts/prettier-check",
-    "prettier": "prettier --write \"{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}\"",
+    "prettier-check": "prettier --check '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
+    "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
     "tests": "jest",
     "test": "npm run lint && npm run tests -- --runInBand --coverage",
     "prepublishOnly": "npm test && npm run dist"
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.1",
     "jest": "^23.5.0",
-    "prettier": "^1.14.2",
+    "prettier": "^1.16.4",
     "request": "^2.88.0",
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
