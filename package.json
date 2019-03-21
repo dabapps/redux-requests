@@ -1,6 +1,6 @@
 {
   "name": "@dabapps/redux-requests",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Library for simple redux requests",
   "main": "dist/js/index.js",
   "directories": {},
@@ -10,8 +10,8 @@
   "scripts": {
     "dist": "./scripts/dist",
     "lint": "tsc --noEmit --project tsconfig.json && npm run prettier-check && tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
-    "prettier-check": "./scripts/prettier-check",
-    "prettier": "prettier --write \"{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}\"",
+    "prettier-check": "prettier --check '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
+    "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
     "tests": "jest",
     "test": "npm run lint && npm run tests -- --runInBand --coverage",
     "prepublishOnly": "npm test && npm run dist"
@@ -41,18 +41,22 @@
     "js-cookie": "^2.1.4",
     "path": "^0.12.7",
     "redux": "^3.7.2",
-    "typescript": "^2.9.2"
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
     "jest": "^23.5.0",
-    "prettier": "^1.14.2",
+    "prettier": "^1.16.4",
     "request": "^2.88.0",
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
-    "tslint-config-dabapps": "github:dabapps/tslint-config-dabapps#v0.5.1"
+    "tslint-config-dabapps": "github:dabapps/tslint-config-dabapps#v0.5.3",
+    "typescript": "^3.3.4000"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "redux-thunk": ">= 2 < 3",
+    "redux": ">= 3 < 4"
+  },
   "jest": {
     "coverageThreshold": {
       "global": {

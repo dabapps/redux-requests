@@ -138,14 +138,8 @@ describe('Requests', () => {
       });
 
       it('should take a bunch of optional arguments', () => {
-        const requestWithLotsOfParams = request.bind(
-          null,
-          ACTION_SET,
-          '/api/url/',
-          METHOD,
-          {},
-          { tag: 'tag' }
-        );
+        const requestWithLotsOfParams = () =>
+          request(ACTION_SET, '/api/url/', METHOD, {}, { tag: 'tag' });
 
         expect(requestWithLotsOfParams).not.toThrowError();
       });
