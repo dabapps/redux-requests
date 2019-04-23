@@ -1,6 +1,6 @@
 {
   "name": "@dabapps/redux-requests",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Library for simple redux requests",
   "main": "dist/js/index.js",
   "directories": {},
