@@ -177,16 +177,20 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
-          dispatch
-        ) as any;
+        myRequest = request(
+          ACTION_SET,
+          '/api//llama/',
+          METHOD
+        )(dispatch) as any;
         expect((myRequest as any).params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
-          dispatch
-        ) as any;
+        myRequest = request(
+          ACTION_SET,
+          'http://www.test.com',
+          METHOD
+        )(dispatch) as any;
         expect((myRequest as any).params.url).toEqual('http://www.test.com');
       });
 
