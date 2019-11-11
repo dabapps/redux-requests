@@ -1,5 +1,6 @@
 import { isFSA } from 'flux-standard-action';
 import { AnyAction } from 'redux';
+
 import { REQUEST_STATE, RESET_REQUEST_STATE } from './actions';
 import {
   ResetRequestStatePayload,
