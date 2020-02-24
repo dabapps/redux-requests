@@ -40,3 +40,5 @@ export interface RequestParams extends Options {
   readonly metaData?: ExtraMeta;
   readonly headers?: Dict<string>;
 }
+
+export type ErrorOrResponse = [(AxiosError | null), (AxiosResponse | null)];

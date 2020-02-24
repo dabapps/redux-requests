@@ -161,6 +161,7 @@ describe('Requests', () => {
       it('should return a thunk for sending a generic request', () => {
         expect(typeof thunk).toBe('function');
       });
+
       it('should dispatch request actions', () => {
         myRequest = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
 
@@ -192,7 +193,7 @@ describe('Requests', () => {
 
       it('should dispatch success actions', () => {
         myRequest = (thunk(dispatch) as any) as AxiosMock;
-        myRequest.success({
+        const result = myRequest.success({
           data: 'llama',
         });
 
@@ -207,6 +208,10 @@ describe('Requests', () => {
         expect(dispatch).toHaveBeenCalledWith(
           setRequestState(ACTION_SET, 'SUCCESS', { data: 'llama' }, undefined)
         );
+
+        return result.then((data: any) => {
+          expect(data).toEqual([null, { data: 'llama' }]);
+        });
       });
 
       it('should dispatch failure actions', () => {
@@ -239,7 +244,7 @@ describe('Requests', () => {
           )
         );
         return result.then((data: any) => {
-          expect(data).toBeUndefined();
+          expect(data).toEqual([{ response: { data: 'llama' } }, null]);
         });
       });
 
@@ -258,7 +263,7 @@ describe('Requests', () => {
             },
           })
           .catch((error: any) => {
-            expect(error).toEqual({ response: { data: 'llama' } });
+            expect(error).toEqual([{ response: { data: 'llama' } }, null]);
           });
       });
     });

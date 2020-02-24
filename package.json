@@ -13,7 +13,8 @@
     "prettier-check": "prettier --check '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
     "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
     "tests": "jest",
-    "test": "npm run lint && npm run tests -- --runInBand --coverage",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "npm run typecheck && npm run lint && npm run tests -- --runInBand --coverage",
     "prepublishOnly": "npm test && npm run dist"
   },
   "repository": {
