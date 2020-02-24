@@ -36,7 +36,7 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
     .filter(
       ([, value]: [string, T]) => value !== null && typeof value !== 'undefined'
     )
-    .map(([key, value]) => [key, value.toString()]);
+    .map(([key, value]) => [key, `${value}`]);
 
   if (!filteredPairs || !filteredPairs.length) {
     return '';
@@ -45,7 +45,9 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
   return '?' + filteredPairs.map(([key, value]) => `${key}=${value}`).join('&');
 }
 
-export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
+export function apiRequest<T = void>(
+  options: AxiosRequestConfig
+): AxiosPromise<T> {
   const combinedHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -82,39 +84,39 @@ export function apiRequest(options: AxiosRequestConfig): AxiosPromise {
   return axios(config);
 }
 
-function getResponseState(
-  state: ResponsesReducerState,
+function getResponseState<T>(
+  state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
-): ResponseState {
+): ResponseState<T> {
   return (state[actionSet.REQUEST] || {})[tag || ''] || {};
 }
-export function isPending(
-  state: ResponsesReducerState,
+export function isPending<T>(
+  state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
   return getResponseState(state, actionSet, tag).requestState === 'REQUEST';
 }
 
-export function hasFailed(
-  state: ResponsesReducerState,
+export function hasFailed<T>(
+  state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
   return getResponseState(state, actionSet, tag).requestState === 'FAILURE';
 }
 
-export function hasSucceeded(
-  state: ResponsesReducerState,
+export function hasSucceeded<T>(
+  state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
 ): boolean {
   return getResponseState(state, actionSet, tag).requestState === 'SUCCESS';
 }
 
-export function anyPending(
-  state: ResponsesReducerState,
+export function anyPending<T>(
+  state: ResponsesReducerState<T>,
   actionSets: ReadonlyArray<AsyncActionSet | [AsyncActionSet, string]>
 ): boolean {
   return actionSets.some(actionSet => {
@@ -131,8 +133,8 @@ function isAxiosError(data: Dict<any>): data is AxiosError {
   return 'config' in data && 'name' in data && 'message' in data;
 }
 
-export function getErrorData(
-  state: ResponsesReducerState,
+export function getErrorData<T>(
+  state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
 ): AxiosError | null {

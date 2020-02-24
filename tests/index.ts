@@ -429,7 +429,7 @@ describe('Requests', () => {
 
     describe('isPending', () => {
       it('should return true if a request is pending', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -444,7 +444,7 @@ describe('Requests', () => {
 
     describe('hasFailed', () => {
       it('should return true if a request has failed', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
@@ -460,7 +460,7 @@ describe('Requests', () => {
 
     describe('hasSucceeded', () => {
       it('should return true if a request has succeeded', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -476,7 +476,7 @@ describe('Requests', () => {
 
     describe('anyPending', () => {
       it('should return true if any requests are pending', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -491,7 +491,7 @@ describe('Requests', () => {
           ])
         ).toBe(true);
 
-        const responsesState2: ResponsesReducerState = {
+        const responsesState2: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -506,7 +506,7 @@ describe('Requests', () => {
           ])
         ).toBe(false);
 
-        const responsesState3: ResponsesReducerState = {
+        const responsesState3: ResponsesReducerState<null> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -534,7 +534,7 @@ describe('Requests', () => {
 
     describe('getErrorData', () => {
       it('should return error data for a failed request', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<{ error: string }> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -557,7 +557,7 @@ describe('Requests', () => {
         };
         expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(null);
 
-        const responsesState2: ResponsesReducerState = {
+        const responsesState2: ResponsesReducerState<{ error: string }> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
@@ -587,7 +587,7 @@ describe('Requests', () => {
       });
 
       it('should skip non-error data', () => {
-        const responsesState: ResponsesReducerState = {
+        const responsesState: ResponsesReducerState<{ error: string }> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',

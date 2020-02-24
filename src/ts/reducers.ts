@@ -7,10 +7,10 @@ import {
   SetRequestStatePayload,
 } from './types';
 
-export function responsesReducer(
-  state: ResponsesReducerState = {},
+export function responsesReducer<T = any>(
+  state: ResponsesReducerState<T> = {},
   action: AnyAction
-): ResponsesReducerState {
+): ResponsesReducerState<T> {
   switch (action.type) {
     case REQUEST_STATE:
       if (isFSA(action)) {
