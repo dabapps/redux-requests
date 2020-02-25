@@ -7,7 +7,7 @@ import {
   SetRequestStatePayload,
 } from './types';
 
-export function responsesReducer<T = any>(
+export function responsesReducer<T = {}>(
   state: ResponsesReducerState<T> = {},
   action: AnyAction
 ): ResponsesReducerState<T> {
