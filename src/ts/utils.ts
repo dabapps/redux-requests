@@ -45,7 +45,7 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
   return '?' + filteredPairs.map(([key, value]) => `${key}=${value}`).join('&');
 }
 
-export function apiRequest<T = void>(
+export function apiRequest<T = {}>(
   options: AxiosRequestConfig
 ): AxiosPromise<T> {
   const combinedHeaders = {
