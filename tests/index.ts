@@ -429,7 +429,7 @@ describe('Requests', () => {
 
     describe('isPending', () => {
       it('should return true if a request is pending', () => {
-        const responsesState: ResponsesReducerState<null> = {
+        const responsesState: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -444,7 +444,7 @@ describe('Requests', () => {
 
     describe('hasFailed', () => {
       it('should return true if a request has failed', () => {
-        const responsesState: ResponsesReducerState<null> = {
+        const responsesState: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
@@ -460,7 +460,7 @@ describe('Requests', () => {
 
     describe('hasSucceeded', () => {
       it('should return true if a request has succeeded', () => {
-        const responsesState: ResponsesReducerState<null> = {
+        const responsesState: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -476,7 +476,7 @@ describe('Requests', () => {
 
     describe('anyPending', () => {
       it('should return true if any requests are pending', () => {
-        const responsesState: ResponsesReducerState<null> = {
+        const responsesState: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -491,7 +491,7 @@ describe('Requests', () => {
           ])
         ).toBe(true);
 
-        const responsesState2: ResponsesReducerState<null> = {
+        const responsesState2: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -506,7 +506,7 @@ describe('Requests', () => {
           ])
         ).toBe(false);
 
-        const responsesState3: ResponsesReducerState<null> = {
+        const responsesState3: ResponsesReducerState<{}> = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
