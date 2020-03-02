@@ -18,7 +18,7 @@ export type ResponseState<T = {}> = Readonly<{
   data: AxiosResponse<T> | AxiosError | null;
 }>;
 
-export type ResponsesReducerState<T = {}> = Dict<Dict<ResponseState<T>>>;
+export type ResponsesReducerState<T = any> = Dict<Dict<ResponseState<T>>>;
 
 export type SetRequestStatePayload = Readonly<{
   actionSet: AsyncActionSet;
