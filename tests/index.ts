@@ -144,6 +144,18 @@ describe('Requests', () => {
         expect(requestWithLotsOfParams).not.toThrowError();
       });
 
+      it('should have sensible return types', () => {
+        request<{ date: number; name: string }>(
+          ACTION_SET,
+          '/api/llama/',
+          METHOD
+        )(dispatch).then(response => {
+          if (response && response.data.name === 'name') {
+            // Just checks the typechecker here, not necessary to jest test it
+          }
+        });
+      });
+
       it('should allow for Header overrides', () => {
         const headerThunk = request(
           ACTION_SET,
@@ -152,7 +164,7 @@ describe('Requests', () => {
           {},
           { headers: { header1: 'blah' }, tag: 'tag' }
         );
-        myRequest = (headerThunk(dispatch) as any) as AxiosMock;
+        myRequest = headerThunk(dispatch) as AxiosMock;
         expect(
           myRequest.params.headers && myRequest.params.headers.header1
         ).toBe('blah');
@@ -161,8 +173,9 @@ describe('Requests', () => {
       it('should return a thunk for sending a generic request', () => {
         expect(typeof thunk).toBe('function');
       });
+
       it('should dispatch request actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
+        myRequest = thunk(dispatch) as AxiosMock;
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
@@ -179,19 +192,19 @@ describe('Requests', () => {
       it('should normalize URLs', () => {
         myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
           dispatch
-        ) as any;
-        expect((myRequest as any).params.url).toEqual('/api/llama/');
+        ) as AxiosMock;
+        expect(myRequest.params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
         myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
           dispatch
-        ) as any;
-        expect((myRequest as any).params.url).toEqual('http://www.test.com');
+        ) as AxiosMock;
+        expect(myRequest.params.url).toEqual('http://www.test.com');
       });
 
       it('should dispatch success actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        myRequest = thunk(dispatch) as AxiosMock;
         myRequest.success({
           data: 'llama',
         });
@@ -210,7 +223,7 @@ describe('Requests', () => {
       });
 
       it('should dispatch failure actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        myRequest = thunk(dispatch) as AxiosMock;
         const result = myRequest.failure({
           response: {
             data: 'llama',
@@ -277,15 +290,15 @@ describe('Requests', () => {
         const myRequest = requestWithConfig(ACTION_SET, {
           url: 'http://www.test.com',
           method: METHOD,
-        })(dispatch) as any;
-        expect((myRequest as any).params.url).toEqual('http://www.test.com');
+        })(dispatch) as AxiosMock;
+        expect(myRequest.params.url).toEqual('http://www.test.com');
       });
       it('should set method', () => {
         const myRequest = requestWithConfig(ACTION_SET, {
           url: 'http://www.test.com',
           method: METHOD,
-        })(dispatch) as any;
-        expect((myRequest as any).params.method).toEqual(METHOD);
+        })(dispatch) as AxiosMock;
+        expect(myRequest.params.method).toEqual(METHOD);
       });
       it('should take extra meta but not override the tag', () => {
         requestWithConfig(
@@ -429,7 +442,7 @@ describe('Requests', () => {
 
     describe('isPending', () => {
       it('should return true if a request is pending', () => {
-        const responsesState: ResponsesReducerState<{}> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -444,7 +457,7 @@ describe('Requests', () => {
 
     describe('hasFailed', () => {
       it('should return true if a request has failed', () => {
-        const responsesState: ResponsesReducerState<{}> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
@@ -460,7 +473,7 @@ describe('Requests', () => {
 
     describe('hasSucceeded', () => {
       it('should return true if a request has succeeded', () => {
-        const responsesState: ResponsesReducerState<{}> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -476,7 +489,7 @@ describe('Requests', () => {
 
     describe('anyPending', () => {
       it('should return true if any requests are pending', () => {
-        const responsesState: ResponsesReducerState<{}> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -491,7 +504,7 @@ describe('Requests', () => {
           ])
         ).toBe(true);
 
-        const responsesState2: ResponsesReducerState<{}> = {
+        const responsesState2: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -506,7 +519,7 @@ describe('Requests', () => {
           ])
         ).toBe(false);
 
-        const responsesState3: ResponsesReducerState<{}> = {
+        const responsesState3: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'SUCCESS',
@@ -534,7 +547,7 @@ describe('Requests', () => {
 
     describe('getErrorData', () => {
       it('should return error data for a failed request', () => {
-        const responsesState: ResponsesReducerState<{ error: string }> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'REQUEST',
@@ -557,7 +570,7 @@ describe('Requests', () => {
         };
         expect(getErrorData(responsesState, ACTION_SET, 'tag')).toBe(null);
 
-        const responsesState2: ResponsesReducerState<{ error: string }> = {
+        const responsesState2: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',
@@ -587,7 +600,7 @@ describe('Requests', () => {
       });
 
       it('should skip non-error data', () => {
-        const responsesState: ResponsesReducerState<{ error: string }> = {
+        const responsesState: ResponsesReducerState = {
           [ACTION_SET.REQUEST]: {
             tag: {
               requestState: 'FAILURE',

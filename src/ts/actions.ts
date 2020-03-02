@@ -47,7 +47,7 @@ function serializeMeta(meta: Partial<ExtraMeta>, options: Options): ExtraMeta {
   };
 }
 
-export function requestWithConfig<T = void>(
+export function requestWithConfig<T = {}>(
   actionSet: AsyncActionSet,
   axoisConfig: AxiosRequestConfig,
   options: Options = {},
@@ -60,7 +60,7 @@ export function requestWithConfig<T = void>(
     dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag));
 
     return apiRequest<T>(axoisConfig).then(
-      (response: AxiosResponse) => {
+      (response: AxiosResponse<T>) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,
@@ -90,7 +90,7 @@ export function requestWithConfig<T = void>(
   };
 }
 
-export function request<T = void>(
+export function request<T = {}>(
   actionSet: AsyncActionSet,
   url: string,
   method: UrlMethod,
