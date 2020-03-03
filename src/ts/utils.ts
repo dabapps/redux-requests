@@ -26,6 +26,7 @@ export function makeAsyncActionSet(actionName: string): AsyncActionSet {
   };
 }
 
+
 export function formatQueryParams<T>(params?: Dict<T>): string {
   if (!params) {
     return '';
@@ -36,7 +37,7 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
     .filter(
       ([, value]: [string, T]) => value !== null && typeof value !== 'undefined'
     )
-    .map(([key, value]) => [key, `${value}`]);
+    .map(([key, value]) => [key, value.toString()]);
 
   if (!filteredPairs || !filteredPairs.length) {
     return '';
