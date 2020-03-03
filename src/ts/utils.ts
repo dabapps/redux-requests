@@ -26,7 +26,6 @@ export function makeAsyncActionSet(actionName: string): AsyncActionSet {
   };
 }
 
-
 export function formatQueryParams<T>(params?: Dict<T>): string {
   if (!params) {
     return '';
