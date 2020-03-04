@@ -144,6 +144,18 @@ describe('Requests', () => {
         expect(requestWithLotsOfParams).not.toThrowError();
       });
 
+      it('should have sensible return types', () => {
+        request<{ date: number; name: string }>(
+          ACTION_SET,
+          '/api/llama/',
+          METHOD
+        )(dispatch).then(response => {
+          if (response && response.data.name === 'name') {
+            // Just checks the typechecker here, not necessary to jest test it
+          }
+        });
+      });
+
       it('should allow for Header overrides', () => {
         const headerThunk = request(
           ACTION_SET,
@@ -152,7 +164,7 @@ describe('Requests', () => {
           {},
           { headers: { header1: 'blah' }, tag: 'tag' }
         );
-        myRequest = (headerThunk(dispatch) as any) as AxiosMock;
+        myRequest = (headerThunk(dispatch) as unknown) as AxiosMock;
         expect(
           myRequest.params.headers && myRequest.params.headers.header1
         ).toBe('blah');
@@ -161,8 +173,9 @@ describe('Requests', () => {
       it('should return a thunk for sending a generic request', () => {
         expect(typeof thunk).toBe('function');
       });
+
       it('should dispatch request actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock; // FIXME: We need type-safe mocking
+        myRequest = (thunk(dispatch) as unknown) as AxiosMock;
 
         expect(dispatch).toHaveBeenCalledWith({
           meta: {
@@ -177,21 +190,21 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        myRequest = request(ACTION_SET, '/api//llama/', METHOD)(
+        myRequest = (request(ACTION_SET, '/api//llama/', METHOD)(
           dispatch
-        ) as any;
-        expect((myRequest as any).params.url).toEqual('/api/llama/');
+        ) as unknown) as AxiosMock;
+        expect(myRequest.params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        myRequest = request(ACTION_SET, 'http://www.test.com', METHOD)(
+        myRequest = (request(ACTION_SET, 'http://www.test.com', METHOD)(
           dispatch
-        ) as any;
-        expect((myRequest as any).params.url).toEqual('http://www.test.com');
+        ) as unknown) as AxiosMock;
+        expect(myRequest.params.url).toEqual('http://www.test.com');
       });
 
       it('should dispatch success actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        myRequest = (thunk(dispatch) as unknown) as AxiosMock;
         myRequest.success({
           data: 'llama',
         });
@@ -210,7 +223,7 @@ describe('Requests', () => {
       });
 
       it('should dispatch failure actions', () => {
-        myRequest = (thunk(dispatch) as any) as AxiosMock;
+        myRequest = (thunk(dispatch) as unknown) as AxiosMock;
         const result = myRequest.failure({
           response: {
             data: 'llama',
@@ -274,18 +287,18 @@ describe('Requests', () => {
         expect(typeof thunk).toBe('function');
       });
       it('should set url', () => {
-        const myRequest = requestWithConfig(ACTION_SET, {
+        const myRequest = (requestWithConfig(ACTION_SET, {
           url: 'http://www.test.com',
           method: METHOD,
-        })(dispatch) as any;
-        expect((myRequest as any).params.url).toEqual('http://www.test.com');
+        })(dispatch) as unknown) as AxiosMock;
+        expect(myRequest.params.url).toEqual('http://www.test.com');
       });
       it('should set method', () => {
-        const myRequest = requestWithConfig(ACTION_SET, {
+        const myRequest = (requestWithConfig(ACTION_SET, {
           url: 'http://www.test.com',
           method: METHOD,
-        })(dispatch) as any;
-        expect((myRequest as any).params.method).toEqual(METHOD);
+        })(dispatch) as unknown) as AxiosMock;
+        expect(myRequest.params.method).toEqual(METHOD);
       });
       it('should take extra meta but not override the tag', () => {
         requestWithConfig(
