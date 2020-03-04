@@ -7,6 +7,7 @@ import {
   SetRequestStatePayload,
 } from './types';
 
+// eslint-disable-next-line import/prefer-default-export, @typescript-eslint/no-explicit-any
 export function responsesReducer<T = any>(
   state: ResponsesReducerState<T> = {},
   action: AnyAction

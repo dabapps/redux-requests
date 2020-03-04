@@ -9,9 +9,10 @@
   },
   "scripts": {
     "dist": "./scripts/dist",
-    "lint": "tsc --noEmit --project tsconfig.json && npm run prettier-check && tslint --project tsconfig.json '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
-    "prettier-check": "prettier --check '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
-    "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx}'",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "lint": "npm run typecheck && npm run prettier-check && eslint '{src,tests,types,examples,docs}/**/*.@(ts|tsx)'",
+    "prettier-check": "prettier --check '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx,json,md}'",
+    "prettier": "prettier --write '{src,tests,types,examples,docs}/**/*.{ts,tsx,js,jsx,json,md}'",
     "tests": "jest",
     "test": "npm run lint && npm run tests -- --runInBand --coverage",
     "prepublishOnly": "npm test && npm run dist"
@@ -45,12 +46,13 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
+    "eslint": "^6.8.0",
+    "eslint-config-dabapps": "github:dabapps/eslint-config-dabapps",
+    "eslint-import-resolver-typescript": "^2.0.0",
     "jest": "^24.7.1",
     "prettier": "^1.16.4",
     "request": "^2.88.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.11.0",
-    "tslint-config-dabapps": "github:dabapps/tslint-config-dabapps#v0.5.3",
     "typescript": "^3.3.4000"
   },
   "peerDependencies": {

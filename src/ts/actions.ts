@@ -15,8 +15,9 @@ export const REQUEST_STATE = 'REQUEST_STATE';
 export function setRequestState(
   actionSet: AsyncActionSet,
   requestState: RequestStates,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
-  tag: string = ''
+  tag = ''
 ) {
   return {
     payload: {
@@ -30,7 +31,7 @@ export function setRequestState(
 }
 
 export const RESET_REQUEST_STATE = 'RESET_REQUEST_STATE';
-export function resetRequestState(actionSet: AsyncActionSet, tag: string = '') {
+export function resetRequestState(actionSet: AsyncActionSet, tag = '') {
   return {
     payload: {
       actionSet,
@@ -53,7 +54,7 @@ export function requestWithConfig<T = {}>(
   options: Options = {},
   extraMeta: Partial<ExtraMeta> = {}
 ) {
-  return (dispatch: Dispatch<any>) => {
+  return <S>(dispatch: Dispatch<S>) => {
     const meta = serializeMeta(extraMeta, options);
 
     dispatch({ type: actionSet.REQUEST, meta });
@@ -94,6 +95,7 @@ export function request<T = {}>(
   actionSet: AsyncActionSet,
   url: string,
   method: UrlMethod,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: string | number | Dict<any> | ReadonlyArray<any>,
   params: RequestParams = {}
 ) {

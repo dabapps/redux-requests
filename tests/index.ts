@@ -1,4 +1,5 @@
 import { Dict } from '../src/ts/types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface AxiosMock {
   failure: (error: any) => any;
@@ -64,7 +65,7 @@ import {
   resetRequestState,
   responsesReducer,
   ResponsesReducerState,
-} from '../src/ts/index';
+} from '../src/ts';
 
 describe('Requests', () => {
   const ACTION_SET = {
@@ -677,3 +678,5 @@ describe('Requests', () => {
     });
   });
 });
+
+/* eslint-enable @typescript-eslint/no-explicit-any */
