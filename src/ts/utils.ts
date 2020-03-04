@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosPromise, AxiosRequestConfig } from 'axios';
-import * as Cookies from 'js-cookie';
+import { get as getCookie } from 'js-cookie';
 import * as path from 'path';
 import {
   AsyncActionSet,
@@ -11,6 +11,7 @@ import {
 function asEntries<T>(params: Dict<T>): ReadonlyArray<[string, T]> {
   const result: Array<[string, T]> = [];
   for (const key in params) {
+    // eslint-disable-next-line no-prototype-builtins
     if (params.hasOwnProperty(key)) {
       result.push([key, params[key]]);
     }
@@ -57,7 +58,7 @@ export function apiRequest<T = {}>(
     Accept: 'application/json',
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache',
-    'X-CSRFToken': Cookies.get('csrftoken'),
+    'X-CSRFToken': getCookie('csrftoken'),
     ...options.headers,
   };
 
@@ -128,13 +129,12 @@ export function anyPending<T>(
     if (actionSet instanceof Array) {
       const [actualSet, tag] = actionSet;
       return isPending(state, actualSet, tag);
-    } else {
-      return isPending(state, actionSet);
     }
+    return isPending(state, actionSet);
   });
 }
 
-function isAxiosError(data: Dict<any>): data is AxiosError {
+function isAxiosError(data: {}): data is AxiosError {
   return 'config' in data && 'name' in data && 'message' in data;
 }
 
