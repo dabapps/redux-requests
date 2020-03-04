@@ -26,7 +26,9 @@ export function makeAsyncActionSet(actionName: string): AsyncActionSet {
   };
 }
 
-export function formatQueryParams<T>(params?: Dict<T>): string {
+export function formatQueryParams(
+  params?: Dict<string | number | boolean | null | undefined>
+): string {
   if (!params) {
     return '';
   }
@@ -34,7 +36,10 @@ export function formatQueryParams<T>(params?: Dict<T>): string {
   const asPairs = asEntries(params);
   const filteredPairs = asPairs
     .filter(
-      ([, value]: [string, T]) => value !== null && typeof value !== 'undefined'
+      <T>(
+        tuple: [string, T]
+      ): tuple is [string, Exclude<T, undefined | null>] =>
+        tuple[1] !== null && typeof tuple[1] !== 'undefined'
     )
     .map(([key, value]) => [key, value.toString()]);
 
