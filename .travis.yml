@@ -6,7 +6,7 @@ node_js:
   - 6.11.5
 
 install:
-  - npm install
+  - npm ci
 
 script:
   - npm test
