@@ -13,12 +13,12 @@ export type AsyncActionSet = Readonly<{
   SUCCESS: string;
 }>;
 
-export type ResponseState = Readonly<{
+export type ResponseState<T = {}> = Readonly<{
   requestState: RequestStates | null;
-  data: AxiosResponse<any> | AxiosError | null;
+  data: AxiosResponse<T> | AxiosError | null;
 }>;
 
-export type ResponsesReducerState = Dict<Dict<ResponseState>>;
+export type ResponsesReducerState<T = any> = Dict<Dict<ResponseState<T>>>;
 
 export type SetRequestStatePayload = Readonly<{
   actionSet: AsyncActionSet;
