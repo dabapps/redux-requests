@@ -1,4 +1,20 @@
+import { requestWithConfig, setRequestState } from '../src/ts/actions';
+import {
+  anyPending,
+  getErrorData,
+  hasFailed,
+  hasSucceeded,
+  isPending,
+  makeAsyncActionSet,
+  request,
+  REQUEST_STATE,
+  RESET_REQUEST_STATE,
+  resetRequestState,
+  responsesReducer,
+  ResponsesReducerState,
+} from '../src/ts/index';
 import { Dict } from '../src/ts/types';
+import { apiRequest, formatQueryParams } from '../src/ts/utils';
 
 interface AxiosMock {
   failure: (error: any) => any;
@@ -47,24 +63,6 @@ jest.mock('axios', () => {
     default: axiosDefault,
   };
 });
-
-import { requestWithConfig, setRequestState } from '../src/ts/actions';
-import { apiRequest, formatQueryParams } from '../src/ts/utils';
-
-import {
-  anyPending,
-  getErrorData,
-  hasFailed,
-  hasSucceeded,
-  isPending,
-  makeAsyncActionSet,
-  request,
-  REQUEST_STATE,
-  RESET_REQUEST_STATE,
-  resetRequestState,
-  responsesReducer,
-  ResponsesReducerState,
-} from '../src/ts/index';
 
 describe('Requests', () => {
   const ACTION_SET = {
@@ -190,17 +188,21 @@ describe('Requests', () => {
       });
 
       it('should normalize URLs', () => {
-        myRequest = (request(ACTION_SET, '/api//llama/', METHOD)(
-          dispatch
-        ) as unknown) as AxiosMock;
-        expect(myRequest.params.url).toEqual('/api/llama/');
+        myRequest = request(
+          ACTION_SET,
+          '/api//llama/',
+          METHOD
+        )(dispatch) as any;
+        expect((myRequest as any).params.url).toEqual('/api/llama/');
       });
 
       it('should not normalize absolute URLs', () => {
-        myRequest = (request(ACTION_SET, 'http://www.test.com', METHOD)(
-          dispatch
-        ) as unknown) as AxiosMock;
-        expect(myRequest.params.url).toEqual('http://www.test.com');
+        myRequest = request(
+          ACTION_SET,
+          'http://www.test.com',
+          METHOD
+        )(dispatch) as any;
+        expect((myRequest as any).params.url).toEqual('http://www.test.com');
       });
 
       it('should dispatch success actions', () => {
