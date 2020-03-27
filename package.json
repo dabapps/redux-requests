@@ -35,7 +35,7 @@
   "homepage": "https://github.com/dabapps/redux-requests#readme",
   "dependencies": {
     "@types/js-cookie": "^2.2.5",
-    "@types/node": "^10.17.17",
+    "@types/node": "^12.12.31",
     "axios": "^0.18.1",
     "flux-standard-action": "^1.2.0",
     "js-cookie": "^2.2.1",
