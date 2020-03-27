@@ -41,7 +41,7 @@
     "js-cookie": "^2.2.1",
     "path": "^0.12.7",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "*"
   },
   "devDependencies": {
     "@types/jest": "^24.9.1",
