@@ -16,6 +16,7 @@ export type AsyncActionSet = Readonly<{
 export type ResponseState<T = {}> = Readonly<{
   requestState: RequestStates | null;
   data: AxiosResponse<T> | AxiosError | null;
+  meta?: ExtraMeta;
 }>;
 
 export type ResponsesReducerState<T = any> = Dict<Dict<ResponseState<T>>>;
@@ -25,6 +26,7 @@ export type SetRequestStatePayload = Readonly<{
   requestState: RequestStates;
   data: any;
   tag?: string;
+  meta?: ExtraMeta;
 }>;
 export type ResetRequestStatePayload = Readonly<{
   actionSet: AsyncActionSet;
