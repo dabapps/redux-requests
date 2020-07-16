@@ -18,7 +18,7 @@ export function setRequestState(
   requestState: RequestStates,
   data: any,
   tag: string = '',
-  meta?: any,
+  meta?: ExtraMeta
 ) {
   return {
     payload: {
@@ -62,8 +62,8 @@ export function requestWithConfig<T = {}>(
     dispatch({ type: actionSet.REQUEST, meta });
     dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag, meta));
 
-    return apiRequest(axiosConfig).then(
-      (response: AxiosResponse) => {
+    return apiRequest<T>(axiosConfig).then(
+      (response: AxiosResponse<T>) => {
         dispatch({
           type: actionSet.SUCCESS,
           payload: response,

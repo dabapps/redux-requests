@@ -20,7 +20,7 @@ export function responsesReducer<T = any>(
           requestState,
           tag,
           data,
-          meta
+          meta,
         } = action.payload as SetRequestStatePayload;
         const existing = state[actionSet.REQUEST] || {};
         return {
@@ -30,7 +30,7 @@ export function responsesReducer<T = any>(
             [tag || '']: {
               requestState,
               data,
-              meta
+              meta,
             },
           },
         };
