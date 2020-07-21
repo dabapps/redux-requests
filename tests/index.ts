@@ -183,7 +183,7 @@ describe('Requests', () => {
         });
 
         expect(dispatch).toHaveBeenCalledWith(
-          setRequestState(ACTION_SET, 'REQUEST', null, undefined)
+          setRequestState(ACTION_SET, 'REQUEST', null, undefined, { tag: '' })
         );
       });
 
