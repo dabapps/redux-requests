@@ -17,7 +17,8 @@ export function setRequestState(
   actionSet: AsyncActionSet,
   requestState: RequestStates,
   data: any,
-  tag: string = ''
+  tag: string = '',
+  meta?: ExtraMeta
 ) {
   return {
     payload: {
@@ -25,6 +26,7 @@ export function setRequestState(
       data,
       requestState,
       tag,
+      meta,
     },
     type: REQUEST_STATE,
   };
@@ -50,7 +52,7 @@ function serializeMeta(meta: Partial<ExtraMeta>, options: Options): ExtraMeta {
 
 export function requestWithConfig<T = {}>(
   actionSet: AsyncActionSet,
-  axoisConfig: AxiosRequestConfig,
+  axiosConfig: AxiosRequestConfig,
   options: Options = {},
   extraMeta: Partial<ExtraMeta> = {}
 ) {
@@ -58,9 +60,9 @@ export function requestWithConfig<T = {}>(
     const meta = serializeMeta(extraMeta, options);
 
     dispatch({ type: actionSet.REQUEST, meta });
-    dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag));
+    dispatch(setRequestState(actionSet, 'REQUEST', null, meta.tag, meta));
 
-    return apiRequest<T>(axoisConfig).then(
+    return apiRequest<T>(axiosConfig).then(
       (response: AxiosResponse<T>) => {
         dispatch({
           type: actionSet.SUCCESS,
