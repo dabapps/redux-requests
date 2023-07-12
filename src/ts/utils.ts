@@ -90,7 +90,7 @@ export function apiRequest<T = {}>(
   return axios(config);
 }
 
-function getResponseState<T>(
+export function getResponseState<T>(
   state: ResponsesReducerState<T>,
   actionSet: AsyncActionSet,
   tag?: string
