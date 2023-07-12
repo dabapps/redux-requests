@@ -1,6 +1,6 @@
 {
   "name": "@dabapps/redux-requests",
-  "version": "0.5.7",
+  "version": "0.6.0",
   "description": "Library for simple redux requests",
   "main": "dist/js/index.js",
   "directories": {},
@@ -36,7 +36,7 @@
   "dependencies": {
     "@types/js-cookie": "^2.2.5",
     "@types/node": "^12.12.31",
-    "axios": "^0.18.1",
+    "axios": "^0.21.4",
     "flux-standard-action": "^1.2.0",
     "js-cookie": "^2.2.1",
     "path": "^0.12.7",
@@ -54,8 +54,8 @@
     "typescript": "^3.3.4000"
   },
   "peerDependencies": {
-    "redux-thunk": "*",
-    "redux": "*"
+    "redux": "*",
+    "redux-thunk": "*"
   },
   "jest": {
     "coverageThreshold": {

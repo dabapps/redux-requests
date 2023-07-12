@@ -554,6 +554,8 @@ describe('Requests', () => {
             tag: {
               requestState: 'REQUEST',
               data: {
+                isAxiosError: false,
+                toJSON: jest.fn(),
                 response: {
                   data: {
                     error: 'Error data!',
@@ -577,6 +579,8 @@ describe('Requests', () => {
             tag: {
               requestState: 'FAILURE',
               data: {
+                isAxiosError: false,
+                toJSON: jest.fn(),
                 response: {
                   data: {
                     error: 'Error data!',
